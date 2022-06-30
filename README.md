@@ -77,8 +77,8 @@ main() {
 JsonAny
 ^^ JsonValue
    ^^ JsonInt
-      ^^ JsonSafeInt     (-9007199254740991 <= x <= 9007199254740991)
-      ^^ JsonUnsafeInt   (full int64 range, but inaccurate) 
+      ^^ SafeJsonInt     (-9007199254740991 <= x <= 9007199254740991)
+      ^^ UnsafeJsonInt   (full int64 range, but inaccurate) 
    ^^ JsonDouble
    ^^ JsonString
 ^^ JsonList

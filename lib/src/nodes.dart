@@ -29,7 +29,7 @@ abstract class JsonNode {
     if (data == null) {
       return JsonNull();
     } else if (data is int) {
-      return safeIntegers ? JsonSafeInt(data) : JsonUnsafeInt(data);
+      return safeIntegers ? SafeJsonInt(data) : UnsafeJsonInt(data);
     } else if (data is double) {
       return JsonDouble(data);
     } else if (data is String) {
@@ -68,11 +68,11 @@ abstract class JsonInt extends JsonValue<int> {
   int toBaseValue() => this.value;
 }
 
-class JsonSafeInt extends JsonInt {
+class SafeJsonInt extends JsonInt {
   static const int MIN_SAFE_INTEGER = -9007199254740991;
   static const int MAX_SAFE_INTEGER = 9007199254740991;
 
-  JsonSafeInt(super.value) {
+  SafeJsonInt(super.value) {
     _checkValue(super.value);
   }
 
@@ -87,8 +87,8 @@ class JsonSafeInt extends JsonInt {
   int toBaseValue() => this.value;
 }
 
-class JsonUnsafeInt extends JsonInt {
-  JsonUnsafeInt(super.value);
+class UnsafeJsonInt extends JsonInt {
+  UnsafeJsonInt(super.value);
 
   @override
   int toBaseValue() => this.value;

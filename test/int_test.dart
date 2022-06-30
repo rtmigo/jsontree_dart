@@ -5,10 +5,10 @@ import 'package:test/test.dart';
 
 void main() {
   test('test constructor', () async {
-    expect(JsonSafeInt(23).value, 23);
-    expect(JsonSafeInt(JsonSafeInt.MAX_SAFE_INTEGER).value, JsonSafeInt.MAX_SAFE_INTEGER);
-    expect(JsonSafeInt(JsonSafeInt.MIN_SAFE_INTEGER).value, JsonSafeInt.MIN_SAFE_INTEGER);
-    expect(()=>JsonSafeInt(JsonSafeInt.MAX_SAFE_INTEGER+1), throwsArgumentError);
-    expect(()=>JsonSafeInt(JsonSafeInt.MIN_SAFE_INTEGER-1), throwsArgumentError);
+    expect(SafeJsonInt(23).value, 23);
+    expect(SafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER).value, SafeJsonInt.MAX_SAFE_INTEGER);
+    expect(SafeJsonInt(SafeJsonInt.MIN_SAFE_INTEGER).value, SafeJsonInt.MIN_SAFE_INTEGER);
+    expect(()=>SafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER+1), throwsArgumentError);
+    expect(()=>SafeJsonInt(SafeJsonInt.MIN_SAFE_INTEGER-1), throwsArgumentError);
   });
 }
