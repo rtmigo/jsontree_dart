@@ -15,6 +15,21 @@ class JsonTypeError extends TypeError {
 }
 
 abstract class JsonNode {
+  /// Converts this wrapper object to inner object, that is guaranteed to
+  /// be JSON-convertible.
+  ///
+  /// ```dart
+  /// final myTree = JsonMap(...);
+  /// final simpleMap = myTree.toJson();
+  /// ```
+  ///
+  /// This method also make possible to pass any `JsonNode` object directly to
+  /// `json.encode` (without calling `toJson`).
+  ///
+  /// ```dart
+  /// final myTree = JsonMap(...);
+  /// json.encode(myTree);
+  /// ```
   dynamic toJson();
 
   String toJsonCode() {
@@ -22,10 +37,10 @@ abstract class JsonNode {
   }
 
   static JsonNode fromJsonCode(String json) {
-    return fromBaseValue(convert.json.decode(json));
+    return fromJson(convert.json.decode(json));
   }
 
-  static JsonNode fromBaseValue(dynamic obj, {bool safeIntegers = true}) {
+  static JsonNode fromJson(dynamic obj, {bool safeIntegers = true}) {
     if (obj == null) {
       return JsonNull();
     } else if (obj is int) {
@@ -38,12 +53,12 @@ abstract class JsonNode {
       return JsonBool(obj);
     } else if (obj is List) {
       return JsonList(obj
-          .map((e) => fromBaseValue(e, safeIntegers: safeIntegers))
+          .map((e) => fromJson(e, safeIntegers: safeIntegers))
           .toList());
     } else if (obj is Map) {
       return JsonMap(Map<String, JsonNode>.fromEntries(obj.entries.map((e) =>
           MapEntry(e.key as String,
-              fromBaseValue(e.value, safeIntegers: safeIntegers)))));
+              fromJson(e.value, safeIntegers: safeIntegers)))));
     } else {
       throw JsonTypeError("Cannot convert ${obj.runtimeType} to JsonNode");
     }
