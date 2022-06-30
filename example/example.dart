@@ -10,6 +10,6 @@ void main() {
   print(tree.toJsonCode());
   // {"name":"Joe","age":30,"kids":["Mary","Michael"]}
 
-  print(tree.toBaseValue());
+  print(tree.toJson());
   // {name: Joe, age: 30, kids: [Mary, Michael]}
 }
