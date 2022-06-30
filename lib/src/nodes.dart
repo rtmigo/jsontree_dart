@@ -136,7 +136,8 @@ class JsonList<T extends JsonNode> extends JsonNode {
   List<dynamic> toBaseValue() =>
       this._mutable.map((e) => e.toBaseValue()).toList();
 
-  MutableJsonList<T> asMutable() => MutableJsonList(this._mutable);
+  /// Creates a copy.
+  MutableJsonList<T> toMutable() => MutableJsonList(List<T>.from(this._mutable));
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
@@ -163,7 +164,7 @@ class JsonMap<T extends JsonNode> extends JsonNode {
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
 
-  MutableJsonMap<T> asMutable() => MutableJsonMap(this._mutable);
+  MutableJsonMap<T> toMutable() => MutableJsonMap(Map<String,T>.from(this._mutable));
 }
 
 class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {

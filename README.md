@@ -130,17 +130,20 @@ final m = MutableJsonMap({"a": 1.jsonNode, "b": 2.jsonNode});
 
 Mutability and immutability are achievable after the creation of objects.
 
-```dart
+``` dart
 final readOnly = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 
-final readWrite = readOnly.asMutable();
+final readWrite = readOnly.toMutable();  // creates a copy
 mutable["c"] = 3.jsonNode;
 
-final readOnlyAgain = readWrite.asImmutable();
+final readOnlyAgain = readWrite.asImmutable();  // wraps the data as immutable
 ```
 
-Keep in mind that when you receive an object with `asMutable`, you will
-essentially modify the contents of the original, immutable object as well.
+`toMutable` will create a copy of the data, respecting the immutability of
+the original objects.
+
+`asImmutable` will just wrap the data into into an object, that does not allow
+modification.
 
 ## Parse JSON
 
