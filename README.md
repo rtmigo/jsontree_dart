@@ -27,11 +27,13 @@ void main() {
 ## Motivation
 
 Imagine that we are creating a web service. We generate a `response` as a `Map`
-and later convert this `Map` to JSON.
+and later convert it to JSON.
 
 #### Bad:
 
 ```dart
+import 'dart:convert';
+
 void addToResponse(Map<String, dynamic> response, String key, dynamic item) {
   response[key] = item;
 }
@@ -51,6 +53,8 @@ main() {
 #### Good:
 
 ``` dart
+import 'package:jsontree/jsontree.dart';
+
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
@@ -88,8 +92,6 @@ Regardless of the type, all the wrapper objects will be inherited from the
 base `JsonNode`. If you have created a `JsonNode`, you can be sure that there is
 JSON-compatible data inside.
 
-
-
 ## .toJson() converts to original objects tree
 
 You can also call `.toJson()` to get rid of all the wrappers and get the
@@ -110,7 +112,7 @@ You can also pass the tree directly to `json.convert`:
 
 ``` dart
 import 'package:jsontree/jsontree.dart';
-import 'dart:convert'
+import 'dart:convert';
 ...
 
 final tree = [1.jsonNode, 2.jsonNode].jsonNode;
@@ -134,7 +136,6 @@ This is just a shortcut for calling `json.convert`.
 By default, all objects are immutable.
 
 ```dart
-
 final JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 // you can read m or m.data, but cannot change 
 ```
@@ -142,7 +143,6 @@ final JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 There are also mutable versions for lists and maps.
 
 ```dart
-
 final m = MutableJsonMap({"a": 1.jsonNode, "b": 2.jsonNode});
 // you can read/write m and m.data 
 ```
