@@ -26,7 +26,7 @@ jobs:
       matrix:
         os: [ubuntu-latest] # [ubuntu-latest, macos-latest, windows-latest]
         sdk: [2.17.0] # latest
-        platform: [node, vm, web]
+        platform: [node, vm, chrome]
 
     steps:
 
