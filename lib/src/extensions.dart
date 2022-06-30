@@ -22,8 +22,10 @@ extension JsonBoolExtension on bool {
 
 extension JsonMapExtension on Map<String, JsonNode> {
   JsonMap get jsonNode => JsonMap(this);
+  JsonMap get mutableJsonNode => MutableJsonMap(this);
 }
 
 extension JsonListExtension on List<JsonNode> {
   JsonList get jsonNode => JsonList(this);
+  JsonList get mutableJsonNode => MutableJsonList(this);
 }
