@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2022 Artёm IG <github.com/rtmigo>
+// SPDX-License-Identifier: MIT
+
 import 'dart:convert' as convert;
 
 class JsonTypeError extends TypeError {
