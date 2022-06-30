@@ -110,7 +110,7 @@ class JsonDouble extends JsonValue<double> {
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
-  /// It can be safely used for reading and writing as a standard collection.
+  /// Can be safely used for reading and writing as a standard collection.
   final List<T> data;
 
   JsonList(this.data);
@@ -126,7 +126,7 @@ class JsonList<T extends JsonNode> extends JsonNode {
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
-  /// It can be safely used for reading and writing as a standard collection.
+  /// Can be safely used for reading and writing as a standard collection.
   final Map<String, T> data;
 
   JsonMap(this.data);
