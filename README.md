@@ -77,12 +77,12 @@ void serializeToJson(JsonMap response, JsonNode param) {
 
 ```
 JsonAny
-^^^^ JsonValue
-^^^^^^^^ JsonInt
-^^^^^^^^ JsonDouble
-^^^^^^^^ JsonString
-^^^^^^^^ JsonList
-^^^^ JsonMap
-^^^^ JsonNull
+^^ JsonValue
+   ^^ JsonInt
+   ^^ JsonDouble
+   ^^ JsonString
+^^ JsonList
+^^ JsonMap
+^^ JsonNull
 ```
   
