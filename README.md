@@ -1,3 +1,6 @@
+![Generic badge](https://img.shields.io/badge/status-WIP-warning.svg)
+![Generic badge](https://img.shields.io/badge/tested_on-VM_|_JS-blue.svg)
+
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
 A library for creating statically checked JSON trees. No dynamic conversion errors!
@@ -27,8 +30,8 @@ and later convert this `Map` to JSON.
 #### Bad:
 
 ```dart
-void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) {
-  jsonResponse[key] = item; 
+void addToResponse(Map<String, dynamic> response, String key, dynamic item) {
+  response[key] = item; 
 }
 
 main() {
@@ -50,7 +53,7 @@ main() {
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
-void serializeToJson(JsonMap response, JsonNode item) {
+void addToResponse(JsonMap response, JsonNode item) {
   response[key] = item;
 }
 
