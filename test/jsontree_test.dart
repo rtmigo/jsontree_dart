@@ -9,7 +9,7 @@ void main() {
     'None': JsonNull()
   });
 
-  test('toBaseType', () async {
+  test('toBaseValue', () async {
     final base = data.toBaseValue();
     expect(base['None'], null);
     expect(base['Fives']![0], 5);
