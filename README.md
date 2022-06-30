@@ -1,3 +1,6 @@
+![Generic badge](https://img.shields.io/badge/status-WIP-warning.svg)
+![Generic badge](https://img.shields.io/badge/tested_on-VM_|_JS-blue.svg)
+
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
 A library for creating statically checked JSON trees. No dynamic conversion errors!
