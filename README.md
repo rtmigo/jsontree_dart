@@ -118,6 +118,7 @@ print(json.convert(original));
 By default, all objects are immutable.
 
 ```dart
+
 final JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 // you can read m or m.data, but cannot change 
 ```
@@ -125,7 +126,9 @@ final JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 There are also mutable versions for lists and maps.
 
 ```dart
-final MutableJsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode.asMutable();
+
+final MutableJsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode
+    .asMutable();
 // you can read/write m and m.data 
 ```
 
@@ -140,8 +143,6 @@ final b = JsonNode.fromJsonCode(src2);
 
 print([a, b, "something else".jsonNode].jsonNode.toJsonCode())
 ```
-
-
 
 ## Hierarchy
 
@@ -161,5 +162,11 @@ JsonAny
 ```
 
 By default, all the objects are immutable except `MutableJsonMap`
-and `MutableJsonList`. 
-  
+and `MutableJsonList`.
+
+All data is statically checked for compatibility, except for `SafeJsonInt`
+values.
+
+With an inappropriate value, `SafeJsonInt` will throw an exception at the time
+of creation. This is still better than getting an error when converting the
+entire tree.
