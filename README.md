@@ -139,6 +139,9 @@ mutable["c"] = 3.jsonNode;
 final readOnlyAgain = readWrite.asImmutable();
 ```
 
+Keep in mind that when you receive an object with `asMutable`, you will
+essentially modify the contents of the original, immutable object as well.
+
 ## Parse JSON
 
 Parsing JSON with this library only makes sense if you want to use the parsed
