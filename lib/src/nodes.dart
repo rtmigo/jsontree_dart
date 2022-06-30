@@ -88,7 +88,6 @@ class SafeJsonInt extends JsonInt {
 }
 
 class UnsafeJsonInt extends JsonInt {
-  // TODO test two way
   UnsafeJsonInt(super.value);
 
   @override
@@ -136,6 +135,8 @@ class JsonList<T extends JsonNode> extends JsonNode {
   @override
   List<dynamic> toBaseValue() =>
       this._mutable.map((e) => e.toBaseValue()).toList();
+
+  MutableJsonList<T> asMutable() => MutableJsonList(this._mutable);
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
@@ -161,6 +162,8 @@ class JsonMap<T extends JsonNode> extends JsonNode {
       ._mutable
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
+
+  MutableJsonMap<T> asMutable() => MutableJsonMap(this._mutable);
 }
 
 class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {

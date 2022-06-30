@@ -11,4 +11,9 @@ void main() {
     expect(()=>SafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER+1), throwsArgumentError);
     expect(()=>SafeJsonInt(SafeJsonInt.MIN_SAFE_INTEGER-1), throwsArgumentError);
   });
+
+  test('unsafe', () async {
+    expect(UnsafeJsonInt(12).toJsonCode(),'12');
+    expect(UnsafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER+10).toJsonCode(), '9007199254741001');
+  });
 }
