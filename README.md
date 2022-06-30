@@ -66,7 +66,8 @@ main() {
 
 ```dart
 // we completely get rid of dynamic types: both response and parameters 
-// are compatible with JSON
+// are descendants of `JsonNode`. That means we can only create JSON-compatible
+// tree
 void serializeToJson(JsonMap response, JsonNode param) {
   response["item"] = item;
 }
@@ -75,12 +76,13 @@ void serializeToJson(JsonMap response, JsonNode param) {
 ## Hierarchy
 
 ```
-  JsonAny
-    JsonValue
-      JsonInt
-      JsonDouble
-      JsonString
-    JsonList
-    JsonMap
+JsonAny
+-- JsonValue
+---- JsonInt
+---- JsonDouble
+---- JsonString
+-- JsonList
+-- JsonMap
+-- JsonNull
 ```
   
