@@ -1,0 +1,62 @@
+# https://github.com/dart-lang/setup-dart
+
+name: unittest
+
+on:
+  push:
+    branches: [dev]
+    paths-ignore:
+      - 'example/*'
+      - '**.md'
+      - '**.txt'
+
+  pull_request:
+    branches: [dev]
+    paths-ignore:
+      - 'example/*'
+      - '**.md'
+      - '**.txt'
+
+jobs:
+  test:
+
+    timeout-minutes: 9
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # [ubuntu-latest, macos-latest, windows-latest]
+        sdk: [2.12.0, latest] # dart is null-safe since 2.12 2.14.0
+        platform: [node, vm]
+
+    steps:
+
+      - uses: actions/checkout@v2
+      #      - uses: actions/setup-node@v2
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Install dependencies
+        run: dart pub get
+
+      #      - name: VM tests
+      #        run: dart test
+
+      #
+      - name: Tests
+
+        run: dart test --platform ${{ matrix.platform }} --timeout=60s
+
+  to-staging:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Merge current -> master
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          target_branch: staging
+          github_token: ${{ github.token }}
+
+
