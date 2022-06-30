@@ -26,7 +26,6 @@ void main() {
   });
 
   test('encode', () async {
-
     //print(data.toJsonCode());
     expect(json.encode(data.toJson()), dataAsJsonCode);
     expect(data.toJsonCode(), dataAsJsonCode);
