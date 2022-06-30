@@ -50,7 +50,7 @@ main() {
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
-void serializeToJson(JsonMap response, JsonNode param) {
+void serializeToJson(JsonMap response, JsonNode item) {
   response[key] = item;
 }
 
