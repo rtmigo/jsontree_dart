@@ -1,5 +1,6 @@
-![Generic badge](https://img.shields.io/badge/status-WIP-warning.svg)
-![Generic badge](https://img.shields.io/badge/tested_on-VM_|_JS-blue.svg)
+![Generic badge](https://img.shields.io/badge/status-WIP-red.svg)
+![Generic badge](https://img.shields.io/badge/dart-2.17+-blue.svg)
+![Generic badge](https://img.shields.io/badge/platform-VM_|_JS-blue.svg)
 
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
