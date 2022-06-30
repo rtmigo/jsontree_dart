@@ -85,7 +85,7 @@ creates `JsonDouble(5.23)`.
 
 This also works for lists and maps as long as there are node objects inside. You
 can do `[1.jsonNode, 2.jsonNode].jsonNode` to get `JsonList<JsonInt>`. But you
-can't just do `[1, 2].jsonNode` - it won't compile.
+can't just do `[1, 2].jsonNode` -- it won't compile.
 
 Regardless of the type, all the wrapper objects will be inherited from the
 base `JsonNode`. If you have created a `JsonNode`, you can be sure that there is
@@ -97,7 +97,7 @@ For any `JsonNode` object, you can call the `.toJsonCode()` method to convert it
 to JSON string.
 
 ``` dart
-final tree = [1.jsonNode, 2.jsonNode];
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
 print(tree.toJsonCode());
 ```
 
@@ -108,7 +108,7 @@ original set of Dart objects. Because these objects were validated when the tree
 was created, the result is guaranteed to be able to be converted to JSON.
 
 ``` dart
-final tree = [1.jsonNode, 2.jsonNode];
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
 final original = tree.toBaseValue();  // [1, 2]
 print(json.convert(original));
 ```
