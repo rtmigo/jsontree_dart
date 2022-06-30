@@ -25,27 +25,27 @@ abstract class JsonNode {
     return fromBaseValue(convert.json.decode(json));
   }
 
-  static JsonNode fromBaseValue(dynamic data, {bool safeIntegers = true}) {
-    if (data == null) {
+  static JsonNode fromBaseValue(dynamic obj, {bool safeIntegers = true}) {
+    if (obj == null) {
       return JsonNull();
-    } else if (data is int) {
-      return safeIntegers ? SafeJsonInt(data) : UnsafeJsonInt(data);
-    } else if (data is double) {
-      return JsonDouble(data);
-    } else if (data is String) {
-      return JsonString(data);
-    } else if (data is bool) {
-      return JsonBool(data);
-    } else if (data is List) {
-      return JsonList(data
+    } else if (obj is int) {
+      return safeIntegers ? SafeJsonInt(obj) : UnsafeJsonInt(obj);
+    } else if (obj is double) {
+      return JsonDouble(obj);
+    } else if (obj is String) {
+      return JsonString(obj);
+    } else if (obj is bool) {
+      return JsonBool(obj);
+    } else if (obj is List) {
+      return JsonList(obj
           .map((e) => fromBaseValue(e, safeIntegers: safeIntegers))
           .toList());
-    } else if (data is Map) {
-      return JsonMap(Map<String, JsonNode>.fromEntries(data.entries.map((e) =>
+    } else if (obj is Map) {
+      return JsonMap(Map<String, JsonNode>.fromEntries(obj.entries.map((e) =>
           MapEntry(e.key as String,
               fromBaseValue(e.value, safeIntegers: safeIntegers)))));
     } else {
-      throw JsonTypeError("Cannot convert ${data.runtimeType} to JsonItem");
+      throw JsonTypeError("Cannot convert ${obj.runtimeType} to JsonNode");
     }
   }
 }
