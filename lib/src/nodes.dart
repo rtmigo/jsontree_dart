@@ -35,10 +35,13 @@ abstract class JsonNode {
     } else if (data is String) {
       return JsonString(data);
     } else if (data is List) {
-      return JsonList(data.map((e)=>fromBaseTypes(e, safeIntegers: safeIntegers)).toList());
+      return JsonList(data
+          .map((e) => fromBaseTypes(e, safeIntegers: safeIntegers))
+          .toList());
     } else if (data is Map) {
-      return JsonMap(Map<String, JsonNode>.fromEntries(data.entries
-          .map((e) => MapEntry(e.key as String, fromBaseTypes(e.value, safeIntegers: safeIntegers)))));
+      return JsonMap(Map<String, JsonNode>.fromEntries(data.entries.map((e) =>
+          MapEntry(e.key as String,
+              fromBaseTypes(e.value, safeIntegers: safeIntegers)))));
     } else {
       throw JsonTypeError("Cannot convert ${data.runtimeType} to JsonItem");
     }
@@ -85,7 +88,6 @@ class JsonUnsafeInt extends JsonInt {
   int toBaseValue() => this.value;
 }
 
-
 class JsonBool extends JsonValue<bool> {
   JsonBool(super.value);
 
@@ -108,39 +110,36 @@ class JsonDouble extends JsonValue<double> {
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
-  final List<T> _items;
+  /// It can be safely used for reading and writing as a standard collection.
+  final List<T> data;
 
-  JsonList(this._items);
+  JsonList(this.data);
 
-  int get length => _items.length;
+  int get length => data.length;
 
-  T operator [](int index) => _items[index];
+  T operator [](int index) => data[index];
 
-  void operator []=(int index, T value) => _items[index] = value;
+  void operator []=(int index, T value) => data[index] = value;
 
   @override
-  List<dynamic> toBaseValue() =>
-      this._items.map((e) => e.toBaseValue()).toList();
+  List<dynamic> toBaseValue() => this.data.map((e) => e.toBaseValue()).toList();
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
-  final Map<String, T> _items;
+  /// It can be safely used for reading and writing as a standard collection.
+  final Map<String, T> data;
 
-  JsonMap(this._items);
+  JsonMap(this.data);
 
-  int get length => _items.length;
+  int get length => data.length;
 
-  bool containsKey(String key) => this._items.containsKey(key);
+  T? operator [](String key) => data[key];
 
-  T? operator [](String key) => _items[key];
-
-  void operator []=(String key, T value) => _items[key] = value;
+  void operator []=(String key, T value) => data[key] = value;
 
   @override
   Map<String, dynamic> toBaseValue() => Map<String, dynamic>.fromEntries(this
-      ._items
+      .data
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
 }
-
-
