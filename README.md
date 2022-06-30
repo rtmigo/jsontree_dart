@@ -44,28 +44,6 @@ main() {
 }
 ```
 
-#### Better:
-
-```dart
-// declaring the param as JsonNode, that is restricted to be some of the 
-// JSON-compatible types  
-void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
-  response[key] = item.toBaseValue();
-}
-
-main() {
-  final response = <String, dynamic>{};
-  
-  // passing all parameters as JsonNode descendants, 
-  // otherwise the compiler will not allow it
-  addToResponse(response, "status", "OK".jsonNode);
-  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
-  
-  // works ok
-  print(json.convert(response));  
-}
-```
-
 #### Good:
 
 ```dart
