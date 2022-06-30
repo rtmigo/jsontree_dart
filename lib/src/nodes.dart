@@ -56,7 +56,8 @@ class JsonNull extends JsonNode {
 }
 
 abstract class JsonValue<T> extends JsonNode {
-  final T value;
+  /// A mutable value that can be safely reassigned.
+  T value;
 
   JsonValue(this.value);
 }
@@ -73,14 +74,27 @@ class JsonSafeInt extends JsonInt {
   static const int MAX_SAFE_INTEGER = 9007199254740991;
 
   JsonSafeInt(super.value) {
-    if (this.value < MIN_SAFE_INTEGER || this.value > MAX_SAFE_INTEGER) {
-      throw ArgumentError.value(value,
+    _checkValue(super.value);
+  }
+
+  static void _checkValue(int x) {
+    if (x < MIN_SAFE_INTEGER || x > MAX_SAFE_INTEGER) {
+      throw ArgumentError.value(x,
           "The value cannot be interpreted exactly as a Number in JavaScript.");
     }
   }
 
   @override
   int toBaseValue() => this.value;
+
+  @override
+  int get value => super.value;
+
+  @override
+  set value(int x) {
+    _checkValue(x);
+    super.value = x;
+  }
 }
 
 class JsonUnsafeInt extends JsonInt {
@@ -112,7 +126,8 @@ class JsonDouble extends JsonValue<double> {
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
-  /// Can be safely used for reading and writing as a standard collection.
+  /// Can be safely used for reading and writing as a standard collection,
+  /// or even replaced by compatible collection.
   final List<T> data;
 
   JsonList(this.data);
@@ -128,8 +143,9 @@ class JsonList<T extends JsonNode> extends JsonNode {
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
-  /// Can be safely used for reading and writing as a standard collection.
-  final Map<String, T> data;
+  /// Can be safely used for reading and writing as a standard collection,
+  /// or even replaced by compatible collection.
+  Map<String, T> data;
 
   JsonMap(this.data);
 
