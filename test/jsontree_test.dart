@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 
 void main() {
   final data = JsonMap({
-    'Fives': JsonList([JsonSafeInt(5), JsonDouble(5.01), JsonString('Five')]),
+    'Fives': JsonList([SafeJsonInt(5), JsonDouble(5.01), JsonString('Five')]),
     'None': JsonNull(),
     'Inner': {"happy": true.jsonNode, "sad": false.jsonNode}.jsonNode
   });

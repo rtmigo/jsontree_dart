@@ -8,8 +8,8 @@ extension JsonStringExtension on String {
 }
 
 extension JsonIntExtension on int {
-  JsonInt get jsonNode => JsonSafeInt(this);
-  JsonInt get jsonUnsafeNode => JsonUnsafeInt(this);
+  JsonInt get jsonNode => SafeJsonInt(this);
+  JsonInt get jsonUnsafeNode => UnsafeJsonInt(this);
 }
 
 extension JsonDoubleExtension on double {
