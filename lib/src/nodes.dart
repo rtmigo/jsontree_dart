@@ -34,6 +34,8 @@ abstract class JsonNode {
       return JsonDouble(data);
     } else if (data is String) {
       return JsonString(data);
+    } else if (data is bool) {
+      return JsonBool(data);
     } else if (data is List) {
       return JsonList(data
           .map((e) => fromBaseValue(e, safeIntegers: safeIntegers))
