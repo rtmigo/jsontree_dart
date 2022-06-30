@@ -38,12 +38,11 @@ void addToResponse(Map<String, dynamic> response, String key, dynamic item) {
 main() {
   final response = <String, dynamic>{};  // to be converted to JSON
 
-  addToResponse(response, "status", "OK");
+  // DateTime is not convertible, but we don't know that yet
+  addToResponse(response, "status", "OK");  
+  addToResponse(response, "time", DateTime.now());  // oops
 
-  // DateTime is not convertible, but we don't know that yet 
-  addToResponse(response, "time", DateTime.now());
-
-  // oops! Dynamic error: DateTime cannot be converted
+  // dynamic error: DateTime cannot be converted
   print(json.convert(response));  
 }
 ```
