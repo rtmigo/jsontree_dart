@@ -22,10 +22,10 @@ abstract class JsonNode {
   }
 
   static JsonNode fromJsonCode(String json) {
-    return fromBaseTypes(convert.json.decode(json));
+    return fromBaseValue(convert.json.decode(json));
   }
 
-  static JsonNode fromBaseTypes(dynamic data, {bool safeIntegers = true}) {
+  static JsonNode fromBaseValue(dynamic data, {bool safeIntegers = true}) {
     if (data == null) {
       return JsonNull();
     } else if (data is int) {
@@ -36,12 +36,12 @@ abstract class JsonNode {
       return JsonString(data);
     } else if (data is List) {
       return JsonList(data
-          .map((e) => fromBaseTypes(e, safeIntegers: safeIntegers))
+          .map((e) => fromBaseValue(e, safeIntegers: safeIntegers))
           .toList());
     } else if (data is Map) {
       return JsonMap(Map<String, JsonNode>.fromEntries(data.entries.map((e) =>
           MapEntry(e.key as String,
-              fromBaseTypes(e.value, safeIntegers: safeIntegers)))));
+              fromBaseValue(e.value, safeIntegers: safeIntegers)))));
     } else {
       throw JsonTypeError("Cannot convert ${data.runtimeType} to JsonItem");
     }
