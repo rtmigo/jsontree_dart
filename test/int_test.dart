@@ -11,4 +11,10 @@ void main() {
     expect(()=>SafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER+1), throwsArgumentError);
     expect(()=>SafeJsonInt(SafeJsonInt.MIN_SAFE_INTEGER-1), throwsArgumentError);
   });
+
+  test('unsafe', () async {
+    expect(UnsafeJsonInt(12).toJsonCode(),'12');
+    // результаты конвертирования будут отличаться в VM и JS
+    expect(UnsafeJsonInt(SafeJsonInt.MAX_SAFE_INTEGER+10).toJsonCode().startsWith('90071992'), true);
+  });
 }

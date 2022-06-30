@@ -25,27 +25,27 @@ abstract class JsonNode {
     return fromBaseValue(convert.json.decode(json));
   }
 
-  static JsonNode fromBaseValue(dynamic data, {bool safeIntegers = true}) {
-    if (data == null) {
+  static JsonNode fromBaseValue(dynamic obj, {bool safeIntegers = true}) {
+    if (obj == null) {
       return JsonNull();
-    } else if (data is int) {
-      return safeIntegers ? SafeJsonInt(data) : UnsafeJsonInt(data);
-    } else if (data is double) {
-      return JsonDouble(data);
-    } else if (data is String) {
-      return JsonString(data);
-    } else if (data is bool) {
-      return JsonBool(data);
-    } else if (data is List) {
-      return JsonList(data
+    } else if (obj is int) {
+      return safeIntegers ? SafeJsonInt(obj) : UnsafeJsonInt(obj);
+    } else if (obj is double) {
+      return JsonDouble(obj);
+    } else if (obj is String) {
+      return JsonString(obj);
+    } else if (obj is bool) {
+      return JsonBool(obj);
+    } else if (obj is List) {
+      return JsonList(obj
           .map((e) => fromBaseValue(e, safeIntegers: safeIntegers))
           .toList());
-    } else if (data is Map) {
-      return JsonMap(Map<String, JsonNode>.fromEntries(data.entries.map((e) =>
+    } else if (obj is Map) {
+      return JsonMap(Map<String, JsonNode>.fromEntries(obj.entries.map((e) =>
           MapEntry(e.key as String,
               fromBaseValue(e.value, safeIntegers: safeIntegers)))));
     } else {
-      throw JsonTypeError("Cannot convert ${data.runtimeType} to JsonItem");
+      throw JsonTypeError("Cannot convert ${obj.runtimeType} to JsonNode");
     }
   }
 }
@@ -88,7 +88,6 @@ class SafeJsonInt extends JsonInt {
 }
 
 class UnsafeJsonInt extends JsonInt {
-  // TODO test two way
   UnsafeJsonInt(super.value);
 
   @override
@@ -136,6 +135,8 @@ class JsonList<T extends JsonNode> extends JsonNode {
   @override
   List<dynamic> toBaseValue() =>
       this._mutable.map((e) => e.toBaseValue()).toList();
+
+  MutableJsonList<T> asMutable() => MutableJsonList(this._mutable);
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
@@ -161,6 +162,8 @@ class JsonMap<T extends JsonNode> extends JsonNode {
       ._mutable
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
+
+  MutableJsonMap<T> asMutable() => MutableJsonMap(this._mutable);
 }
 
 class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
@@ -171,6 +174,8 @@ class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
   /// The contents of `JsonMap`, as a standard mutable collection.
   @override
   Map<String, T> get data => this._mutable;
+
+  JsonMap<T> asImmutable() => JsonMap(this._mutable);
 }
 
 class MutableJsonList<T extends JsonNode> extends JsonList<T> {
@@ -181,4 +186,6 @@ class MutableJsonList<T extends JsonNode> extends JsonList<T> {
   /// The contents of `JsonList`, as a standard mutable collection.
   @override
   List<T> get data => this._mutable;
+
+  JsonList<T> asImmutable() => JsonList(this._mutable);
 }
