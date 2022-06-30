@@ -22,20 +22,20 @@ abstract class JsonNode {
     return fromBaseTypes(convert.json.decode(json));
   }
 
-  static JsonNode fromBaseTypes(dynamic data) {
+  static JsonNode fromBaseTypes(dynamic data, {bool safeIntegers = true}) {
     if (data == null) {
       return JsonNull();
     } else if (data is int) {
-      return JsonInt(data);
+      return safeIntegers ? JsonSafeInt(data) : JsonUnsafeInt(data);
     } else if (data is double) {
       return JsonDouble(data);
     } else if (data is String) {
       return JsonString(data);
     } else if (data is List) {
-      return JsonList(data.map(fromBaseTypes).toList());
+      return JsonList(data.map((e)=>fromBaseTypes(e, safeIntegers: safeIntegers)).toList());
     } else if (data is Map) {
       return JsonMap(Map<String, JsonNode>.fromEntries(data.entries
-          .map((e) => MapEntry(e.key as String, fromBaseTypes(e.value)))));
+          .map((e) => MapEntry(e.key as String, fromBaseTypes(e.value, safeIntegers: safeIntegers)))));
     } else {
       throw JsonTypeError("Cannot convert ${data.runtimeType} to JsonItem");
     }
@@ -53,12 +53,35 @@ abstract class JsonValue<T> extends JsonNode {
   JsonValue(this.value);
 }
 
-class JsonInt extends JsonValue<int> {
+abstract class JsonInt extends JsonValue<int> {
   JsonInt(super.value);
 
   @override
   int toBaseValue() => this.value;
 }
+
+class JsonSafeInt extends JsonInt {
+  static const int MIN_SAFE_INTEGER = -9007199254740991;
+  static const int MAX_SAFE_INTEGER = 9007199254740991;
+
+  JsonSafeInt(super.value) {
+    if (this.value < MIN_SAFE_INTEGER || this.value > MAX_SAFE_INTEGER) {
+      throw ArgumentError.value(value,
+          "The value cannot be interpreted exactly as a Number in JavaScript.");
+    }
+  }
+
+  @override
+  int toBaseValue() => this.value;
+}
+
+class JsonUnsafeInt extends JsonInt {
+  JsonUnsafeInt(super.value);
+
+  @override
+  int toBaseValue() => this.value;
+}
+
 
 class JsonBool extends JsonValue<bool> {
   JsonBool(super.value);
@@ -122,7 +145,8 @@ extension JsonStringExtension on String {
 }
 
 extension JsonIntExtension on int {
-  JsonInt get jsonNode => JsonInt(this);
+  JsonInt get jsonNode => JsonSafeInt(this);
+  JsonInt get jsonUnsafeNode => JsonUnsafeInt(this);
 }
 
 extension JsonDoubleExtension on double {
