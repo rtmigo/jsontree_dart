@@ -1,6 +1,6 @@
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
-(draft) A library for creating JSON trees without surprises.
+(draft) A library for creating JSON trees without dynamic conversion errors.
 
 ## Example
 
