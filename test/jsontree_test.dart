@@ -6,7 +6,8 @@ import 'package:test/test.dart';
 void main() {
   final data = JsonMap({
     'Fives': JsonList([JsonSafeInt(5), JsonDouble(5.01), JsonString('Five')]),
-    'None': JsonNull()
+    'None': JsonNull(),
+    'Inner': {"happy": true.jsonNode, "sad": false.jsonNode}.jsonNode
   });
 
   test('toBaseValue', () async {
@@ -15,10 +16,12 @@ void main() {
     expect(base['Fives']![0], 5);
     expect(base['Fives']![1], 5.01);
     expect(base['Fives']![2], 'Five');
+    expect(base['Inner']!["happy"]!, true);
   });
 
   test('encode', () async {
-    const expected = '{"Fives":[5,5.01,"Five"],"None":null}';
+    const expected = '{"Fives":[5,5.01,"Five"],"None":null,"Inner":{"happy":true,"sad":false}}';
+    //print(data.toJsonCode());
     expect(json.encode(data.toBaseValue()), expected);
     expect(data.toJsonCode(), expected);
   });
