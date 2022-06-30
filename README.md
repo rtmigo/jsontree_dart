@@ -124,9 +124,19 @@ There are also mutable versions for lists and maps.
 
 ```dart
 
-final MutableJsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode
-    .asMutable();
+final m = MutableJsonMap({"a": 1.jsonNode, "b": 2.jsonNode});
 // you can read/write m and m.data 
+```
+
+Mutability and immutability are achievable after the creation of objects.
+
+```dart
+final immutable = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
+
+final mutable = immutable.asMutable();
+mutable["c"] = 3.jsonNode;
+
+final immutableAgain = mutable.asImmutable();
 ```
 
 ## Parse JSON
