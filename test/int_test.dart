@@ -11,15 +11,4 @@ void main() {
     expect(()=>JsonSafeInt(JsonSafeInt.MAX_SAFE_INTEGER+1), throwsArgumentError);
     expect(()=>JsonSafeInt(JsonSafeInt.MIN_SAFE_INTEGER-1), throwsArgumentError);
   });
-
-  test('test assignment', () async {
-    final jsi = JsonSafeInt(23);
-    expect(jsi.value, 23);
-    jsi.value = 5;
-    expect(jsi.value, 5);
-
-    expect(()=>jsi.value = JsonSafeInt.MAX_SAFE_INTEGER+1, throwsArgumentError);
-    expect(()=>jsi.value = JsonSafeInt.MIN_SAFE_INTEGER-1, throwsArgumentError);
-  });
-
 }
