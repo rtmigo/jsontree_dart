@@ -50,7 +50,7 @@ main() {
 
 #### Good:
 
-```dart
+``` dart
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
@@ -65,10 +65,7 @@ main() {
   // of the parameters is checked even before compilation: the IDE will warn you 
   // about an incorrect parameter
   addToResponse(response, "status", "OK".jsonNode);
-  addToResponse(response, "time", DateTime
-      .now()
-      .millisecondsSinceEpoch
-      .jsonNode);
+  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
 
   // no errors, as it should be
   print(response.toJsonCode());

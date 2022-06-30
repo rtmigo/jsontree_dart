@@ -174,6 +174,8 @@ class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
   /// The contents of `JsonMap`, as a standard mutable collection.
   @override
   Map<String, T> get data => this._mutable;
+
+  JsonMap<T> asImmutable() => JsonMap(this._mutable);
 }
 
 class MutableJsonList<T extends JsonNode> extends JsonList<T> {
@@ -184,4 +186,6 @@ class MutableJsonList<T extends JsonNode> extends JsonList<T> {
   /// The contents of `JsonList`, as a standard mutable collection.
   @override
   List<T> get data => this._mutable;
+
+  JsonList<T> asImmutable() => JsonList(this._mutable);
 }
