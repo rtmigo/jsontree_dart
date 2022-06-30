@@ -10,7 +10,9 @@ void main() {
     'Inner': {"happy": true.jsonNode, "sad": false.jsonNode}.jsonNode
   });
 
-  test('toBaseValue', () async {
+  const dataAsJsonCode = '{"Fives":[5,5.01,"Five"],"None":null,"Inner":{"happy":true,"sad":false}}';
+
+  test('.toJson (objects)', ()  {
     final base = data.toJson();
     expect(base['None'], null);
     expect(base['Fives']![0], 5);
@@ -19,14 +21,18 @@ void main() {
     expect(base['Inner']!["happy"]!, true);
   });
 
-  test('encode', () async {
-    const expected = '{"Fives":[5,5.01,"Five"],"None":null,"Inner":{"happy":true,"sad":false}}';
-    //print(data.toJsonCode());
-    expect(json.encode(data.toJson()), expected);
-    expect(data.toJsonCode(), expected);
+  test('.toJson used by convert.json encoder', ()  {
+    expect(json.encode(data), dataAsJsonCode);
   });
 
-  test('decode', () async {
+  test('encode', () async {
+
+    //print(data.toJsonCode());
+    expect(json.encode(data.toJson()), dataAsJsonCode);
+    expect(data.toJsonCode(), dataAsJsonCode);
+  });
+
+  test('decode', ()  {
     final encoded = data.toJsonCode();
     final decoded = JsonNode.fromJsonCode(encoded);
 
