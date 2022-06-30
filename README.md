@@ -1,6 +1,6 @@
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
-(draft) A library for creating JSON trees without dynamic conversion errors.
+A library for creating statically checked JSON trees. No dynamic conversion errors!
 
 ## Example
 
@@ -19,9 +19,6 @@ void main() {
 }
 ```
 
-The trick is that all elements of the tree are checked statically. We have not 
-used any dynamic value that could be non-convertible.
-
 ## Motivation
 
 Imagine that we are creating a web service. We generate a `response` as a `Map`
@@ -31,7 +28,7 @@ and later convert this `Map` to JSON.
 
 ```dart
 void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) {
-  jsonResponse["item"] = item; 
+  jsonResponse[key] = item; 
 }
 
 main() {
@@ -53,7 +50,7 @@ main() {
 // declaring the param as JsonNode, that is restricted to be some of the 
 // JSON-compatible types  
 void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
-  response["item"] = item.toBaseValue();
+  response[key] = item.toBaseValue();
 }
 
 main() {
@@ -76,7 +73,7 @@ main() {
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
 void serializeToJson(JsonMap response, JsonNode param) {
-  response["item"] = item;
+  response[key] = item;
 }
 
 main() {
