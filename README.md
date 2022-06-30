@@ -5,14 +5,18 @@
 ## Example
 
 ```dart
-final tree = {
-  "name": "Joe".jsonNode,
-  "age": 30.jsonNode,
-  "kids": ["Mary".jsonNode, "Michael".jsonNode]
-}.jsonNode;
+import 'package:jsontree/jsontree.dart';
 
-print(tree.toBaseValue);
-print(tree.toJsonCode());
+void main() {
+  final tree = {
+    "name": "Joe".jsonNode,
+    "age": 30.jsonNode,
+    "kids": ["Mary".jsonNode, "Michael".jsonNode].jsonNode
+  }.jsonNode;
+
+  print(tree.toJsonCode());
+  // {"name":"Joe","age":30,"kids":["Mary","Michael"]}
+}
 ```
 
 ## Motivation
@@ -28,15 +32,15 @@ void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) 
 }
 
 main() {
-  final response = Map<String, dynamic>();
+  final response = Map<String, dynamic>();  // to be converted to JSON
 
-  addToResponse(jsonResponse, "status", "OK");
+  addToResponse(response, "status", "OK");
 
   // DateTime is not convertible, but we don't know that yet 
-  addToResponse(jsonResponse, "time", DateTime.now());
+  addToResponse(response, "time", DateTime.now());
 
   // oops! Dynamic error: DateTime cannot be converted
-  print(json.convert(jsonResponse));  
+  print(json.convert(response));  
 }
 ```
 
@@ -45,7 +49,7 @@ main() {
 ```dart
 // declaring the param as JsonNode, that is restricted to be some of the 
 // JSON-compatible types  
-void addToResponse(Map<String, dynamic> jsonResponse, String key, JsonNode param) {
+void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
   response["item"] = item.toBaseValue();
 }
 
@@ -70,6 +74,15 @@ main() {
 // tree
 void serializeToJson(JsonMap response, JsonNode param) {
   response["item"] = item;
+}
+
+main() {
+  final response =JsonMap();
+
+  addToResponse(response, "status", "OK".jsonNode);
+  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
+
+  print(response.toJsonCode());
 }
 ```
 
