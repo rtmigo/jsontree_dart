@@ -88,7 +88,36 @@ Regardless of the type, all the wrapper objects will be inherited from the
 base `JsonNode`. If you have created a `JsonNode`, you can be sure that there is
 JSON-compatible data inside.
 
-## Convert to JSON
+
+
+## .toJson() converts to original objects tree
+
+You can also call `.toJson()` to get rid of all the wrappers and get the
+original set of Dart objects. Because these objects were validated when the tree
+was created, the result is guaranteed to be able to be converted to JSON.
+
+``` dart
+import 'package:jsontree/jsontree.dart';
+import 'dart:convert'
+...
+
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
+final original = tree.toJson();  // [1, 2]
+print(json.convert(original));
+```
+
+You can also pass the tree directly to `json.convert`:
+
+``` dart
+import 'package:jsontree/jsontree.dart';
+import 'dart:convert'
+...
+
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
+print(json.convert(tree));
+```
+
+## .toJsonCode() convert to string with JSON
 
 For any `JsonNode` object, you can call the `.toJsonCode()` method to convert it
 to JSON string.
@@ -98,17 +127,7 @@ final tree = [1.jsonNode, 2.jsonNode].jsonNode;
 print(tree.toJsonCode());
 ```
 
-## Convert to original objects tree
-
-You can also call `.toBaseValue()` to get rid of all the wrappers and get the
-original set of Dart objects. Because these objects were validated when the tree
-was created, the result is guaranteed to be able to be converted to JSON.
-
-``` dart
-final tree = [1.jsonNode, 2.jsonNode].jsonNode;
-final original = tree.toBaseValue();  // [1, 2]
-print(json.convert(original));
-```
+This is just a shortcut for calling `json.convert`. 
 
 ## Immutability
 
