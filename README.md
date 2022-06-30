@@ -136,7 +136,7 @@ final readOnly = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 final readWrite = readOnly.asMutable();
 mutable["c"] = 3.jsonNode;
 
-final readOnlyAgain = mutable.asImmutable();
+final readOnlyAgain = readWrite.asImmutable();
 ```
 
 ## Parse JSON
