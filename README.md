@@ -57,13 +57,13 @@ void serializeToJson(JsonMap response, JsonNode item) {
 main() {
   final response = JsonMap();
 
-  // We are forced to convert each parameter to a JsonNode. And the correctness 
+  // we are forced to convert each parameter to a JsonNode. And the correctness 
   // of the parameters is checked even before compilation: the IDE will warn you 
   // about an incorrect parameter
   addToResponse(response, "status", "OK".jsonNode);
   addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
 
-  // No errors, as it should be
+  // no errors, as it should be
   print(response.toJsonCode());
 }
 ```
