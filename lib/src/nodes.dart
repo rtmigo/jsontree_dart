@@ -52,9 +52,8 @@ abstract class JsonNode {
     } else if (obj is bool) {
       return JsonBool(obj);
     } else if (obj is List) {
-      return JsonList(obj
-          .map((e) => fromJson(e, safeIntegers: safeIntegers))
-          .toList());
+      return JsonList(
+          obj.map((e) => fromJson(e, safeIntegers: safeIntegers)).toList());
     } else if (obj is Map) {
       return JsonMap(Map<String, JsonNode>.fromEntries(obj.entries.map((e) =>
           MapEntry(e.key as String,
@@ -68,6 +67,13 @@ abstract class JsonNode {
 class JsonNull extends JsonNode {
   @override
   dynamic toJson() => null;
+
+  // This is a singleton object.
+  factory JsonNull() => _instance;
+
+  JsonNull._();
+
+  static final JsonNull _instance = JsonNull._();
 }
 
 abstract class JsonValue<T> extends JsonNode {
@@ -140,19 +146,19 @@ class JsonList<T extends JsonNode> extends JsonNode {
   JsonList(this._mutable);
 
   /// The contents of JsonList, as a standard immutable collection.
-  List<T> get data => _immutable ??= List<T>.from(_mutable);
-  List<T>? _immutable; // TODO unit test
+  List<T> get data => _immutable ??= List<T>.unmodifiable(_mutable);
+  List<T>? _immutable;
 
   int get length => _mutable.length;
 
   T operator [](int index) => _mutable[index];
 
   @override
-  List<dynamic> toJson() =>
-      this._mutable.map((e) => e.toJson()).toList();
+  List<dynamic> toJson() => this._mutable.map((e) => e.toJson()).toList();
 
   /// Creates a copy.
-  MutableJsonList<T> toMutable() => MutableJsonList(List<T>.from(this._mutable));
+  MutableJsonList<T> toMutable() =>
+      MutableJsonList(List<T>.from(this._mutable));
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
@@ -167,7 +173,7 @@ class JsonMap<T extends JsonNode> extends JsonNode {
   /// The contents of JsonMap, as a standard immutable collection.
   Map<String, T> get data =>
       _immutable ??= Map<String, T>.unmodifiable(_mutable);
-  Map<String, T>? _immutable; // TODO unit test
+  Map<String, T>? _immutable;
 
   int get length => _mutable.length;
 
@@ -179,7 +185,8 @@ class JsonMap<T extends JsonNode> extends JsonNode {
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toJson())));
 
-  MutableJsonMap<T> toMutable() => MutableJsonMap(Map<String,T>.from(this._mutable));
+  MutableJsonMap<T> toMutable() =>
+      MutableJsonMap(Map<String, T>.from(this._mutable));
 }
 
 class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
