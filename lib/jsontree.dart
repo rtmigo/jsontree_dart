@@ -1,1 +1,2 @@
-export 'src/_jsontree.dart';
+export 'src/nodes.dart';
+export 'src/extensions.dart';

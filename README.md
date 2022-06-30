@@ -1,6 +1,6 @@
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
-(draft) A library for creating JSON trees without dynamic conversion errors.
+A library for creating statically checked JSON trees. No dynamic conversion errors!
 
 ## Example
 
@@ -19,9 +19,6 @@ void main() {
 }
 ```
 
-The trick is that all elements of the tree are checked statically. We have not 
-used any dynamic value that could be non-convertible.
-
 ## Motivation
 
 Imagine that we are creating a web service. We generate a `response` as a `Map`
@@ -31,11 +28,11 @@ and later convert this `Map` to JSON.
 
 ```dart
 void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) {
-  jsonResponse["item"] = item; 
+  jsonResponse[key] = item; 
 }
 
 main() {
-  final response = Map<String, dynamic>();  // to be converted to JSON
+  final response = <String, dynamic>{};  // to be converted to JSON
 
   addToResponse(response, "status", "OK");
 
@@ -47,44 +44,26 @@ main() {
 }
 ```
 
-#### Better:
-
-```dart
-// declaring the param as JsonNode, that is restricted to be some of the 
-// JSON-compatible types  
-void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
-  response["item"] = item.toBaseValue();
-}
-
-main() {
-  final response = Map<String, dynamic>();
-  
-  // passing all parameters as JsonNode descendants, 
-  // otherwise the compiler will not allow it
-  addToResponse(response, "status", "OK".jsonNode);
-  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
-  
-  // works ok
-  print(json.convert(response));  
-}
-```
-
 #### Good:
 
 ```dart
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
-void serializeToJson(JsonMap response, JsonNode param) {
-  response["item"] = item;
+void serializeToJson(JsonMap response, JsonNode item) {
+  response[key] = item;
 }
 
 main() {
-  final response =JsonMap();
+  final response = JsonMap();
 
+  // we are forced to convert each parameter to a JsonNode. And the correctness 
+  // of the parameters is checked even before compilation: the IDE will warn you 
+  // about an incorrect parameter
   addToResponse(response, "status", "OK".jsonNode);
   addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
 
+  // no errors, as it should be
   print(response.toJsonCode());
 }
 ```
