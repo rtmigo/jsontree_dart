@@ -19,6 +19,9 @@ void main() {
 }
 ```
 
+The trick is that all elements of the tree are checked statically. We have not 
+used any dynamic value that could be non-convertible.
+
 ## Motivation
 
 Imagine that we are creating a web service. We generate a `response` as a `Map`
@@ -92,6 +95,8 @@ main() {
 JsonAny
 ^^ JsonValue
    ^^ JsonInt
+      ^^ JsonSafeInt     (-9007199254740991 <= x <= 9007199254740991)
+      ^^ JsonUnsafeInt   (full int64 range, but inaccurate) 
    ^^ JsonDouble
    ^^ JsonString
 ^^ JsonList
