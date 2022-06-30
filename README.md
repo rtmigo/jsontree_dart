@@ -32,7 +32,7 @@ void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) 
 }
 
 main() {
-  final response = Map<String, dynamic>();  // to be converted to JSON
+  final response = <String, dynamic>{};  // to be converted to JSON
 
   addToResponse(response, "status", "OK");
 
@@ -54,7 +54,7 @@ void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
 }
 
 main() {
-  final response = Map<String, dynamic>();
+  final response = <String, dynamic>{};
   
   // passing all parameters as JsonNode descendants, 
   // otherwise the compiler will not allow it
@@ -77,7 +77,7 @@ void serializeToJson(JsonMap response, JsonNode param) {
 }
 
 main() {
-  final response =JsonMap();
+  final response = JsonMap();
 
   addToResponse(response, "status", "OK".jsonNode);
   addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
