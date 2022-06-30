@@ -88,6 +88,7 @@ class SafeJsonInt extends JsonInt {
 }
 
 class UnsafeJsonInt extends JsonInt {
+  // TODO test two way
   UnsafeJsonInt(super.value);
 
   @override
