@@ -11,7 +11,7 @@ void main() {
   });
 
   test('toBaseValue', () async {
-    final base = data.toBaseValue();
+    final base = data.toJson();
     expect(base['None'], null);
     expect(base['Fives']![0], 5);
     expect(base['Fives']![1], 5.01);
@@ -22,7 +22,7 @@ void main() {
   test('encode', () async {
     const expected = '{"Fives":[5,5.01,"Five"],"None":null,"Inner":{"happy":true,"sad":false}}';
     //print(data.toJsonCode());
-    expect(json.encode(data.toBaseValue()), expected);
+    expect(json.encode(data.toJson()), expected);
     expect(data.toJsonCode(), expected);
   });
 

@@ -15,10 +15,10 @@ class JsonTypeError extends TypeError {
 }
 
 abstract class JsonNode {
-  dynamic toBaseValue();
+  dynamic toJson();
 
   String toJsonCode() {
-    return convert.json.encode(this.toBaseValue());
+    return convert.json.encode(this.toJson());
   }
 
   static JsonNode fromJsonCode(String json) {
@@ -52,7 +52,7 @@ abstract class JsonNode {
 
 class JsonNull extends JsonNode {
   @override
-  dynamic toBaseValue() => null;
+  dynamic toJson() => null;
 }
 
 abstract class JsonValue<T> extends JsonNode {
@@ -65,7 +65,7 @@ abstract class JsonInt extends JsonValue<int> {
   JsonInt(super.value);
 
   @override
-  int toBaseValue() => this.value;
+  int toJson() => this.value;
 }
 
 class SafeJsonInt extends JsonInt {
@@ -84,35 +84,35 @@ class SafeJsonInt extends JsonInt {
   }
 
   @override
-  int toBaseValue() => this.value;
+  int toJson() => this.value;
 }
 
 class UnsafeJsonInt extends JsonInt {
   UnsafeJsonInt(super.value);
 
   @override
-  int toBaseValue() => this.value;
+  int toJson() => this.value;
 }
 
 class JsonBool extends JsonValue<bool> {
   JsonBool(super.value);
 
   @override
-  bool toBaseValue() => this.value;
+  bool toJson() => this.value;
 }
 
 class JsonString extends JsonValue<String> {
   JsonString(super.value);
 
   @override
-  String toBaseValue() => this.value;
+  String toJson() => this.value;
 }
 
 class JsonDouble extends JsonValue<double> {
   JsonDouble(super.value);
 
   @override
-  double toBaseValue() => this.value;
+  double toJson() => this.value;
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
@@ -133,8 +133,8 @@ class JsonList<T extends JsonNode> extends JsonNode {
   T operator [](int index) => _mutable[index];
 
   @override
-  List<dynamic> toBaseValue() =>
-      this._mutable.map((e) => e.toBaseValue()).toList();
+  List<dynamic> toJson() =>
+      this._mutable.map((e) => e.toJson()).toList();
 
   /// Creates a copy.
   MutableJsonList<T> toMutable() => MutableJsonList(List<T>.from(this._mutable));
@@ -159,10 +159,10 @@ class JsonMap<T extends JsonNode> extends JsonNode {
   T? operator [](String key) => _mutable[key];
 
   @override
-  Map<String, dynamic> toBaseValue() => Map<String, dynamic>.fromEntries(this
+  Map<String, dynamic> toJson() => Map<String, dynamic>.fromEntries(this
       ._mutable
       .entries
-      .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
+      .map((me) => MapEntry<String, dynamic>(me.key, me.value.toJson())));
 
   MutableJsonMap<T> toMutable() => MutableJsonMap(Map<String,T>.from(this._mutable));
 }
