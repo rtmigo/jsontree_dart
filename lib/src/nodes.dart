@@ -56,8 +56,7 @@ class JsonNull extends JsonNode {
 }
 
 abstract class JsonValue<T> extends JsonNode {
-  /// A mutable value that can be safely reassigned.
-  T value;
+  final T value;
 
   JsonValue(this.value);
 }
@@ -86,15 +85,6 @@ class JsonSafeInt extends JsonInt {
 
   @override
   int toBaseValue() => this.value;
-
-  @override
-  int get value => super.value;
-
-  @override
-  set value(int x) {
-    _checkValue(x);
-    super.value = x;
-  }
 }
 
 class JsonUnsafeInt extends JsonInt {
@@ -126,38 +116,68 @@ class JsonDouble extends JsonValue<double> {
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
-  /// Can be safely used for reading and writing as a standard collection,
-  /// or even replaced by compatible collection.
-  final List<T> data;
+  final List<T> _mutable;
 
-  JsonList(this.data);
+  /// Creates an object from an existing list of `JsonNode` elements.
+  ///
+  /// If immutability is important to you, the original list should not be
+  /// modified after the constructor has been called.
+  JsonList(this._mutable);
 
-  int get length => data.length;
+  /// The contents of JsonList, as a standard immutable collection.
+  List<T> get data => _immutable ??= List<T>.from(_mutable);
+  List<T>? _immutable; // TODO unit test
 
-  T operator [](int index) => data[index];
+  int get length => _mutable.length;
 
-  void operator []=(int index, T value) => data[index] = value;
+  T operator [](int index) => _mutable[index];
 
   @override
-  List<dynamic> toBaseValue() => this.data.map((e) => e.toBaseValue()).toList();
+  List<dynamic> toBaseValue() =>
+      this._mutable.map((e) => e.toBaseValue()).toList();
 }
 
 class JsonMap<T extends JsonNode> extends JsonNode {
-  /// Can be safely used for reading and writing as a standard collection,
-  /// or even replaced by compatible collection.
-  Map<String, T> data;
+  final Map<String, T> _mutable;
 
-  JsonMap(this.data);
+  /// Creates an object from an existing map of `JsonNode` elements.
+  ///
+  /// If immutability is important to you, the original map should not be
+  /// modified after the constructor has been called.
+  JsonMap(this._mutable);
 
-  int get length => data.length;
+  /// The contents of JsonMap, as a standard immutable collection.
+  Map<String, T> get data =>
+      _immutable ??= Map<String, T>.unmodifiable(_mutable);
+  Map<String, T>? _immutable; // TODO unit test
 
-  T? operator [](String key) => data[key];
+  int get length => _mutable.length;
 
-  void operator []=(String key, T value) => data[key] = value;
+  T? operator [](String key) => _mutable[key];
 
   @override
   Map<String, dynamic> toBaseValue() => Map<String, dynamic>.fromEntries(this
-      .data
+      ._mutable
       .entries
       .map((me) => MapEntry<String, dynamic>(me.key, me.value.toBaseValue())));
+}
+
+class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
+  MutableJsonMap(super.data);
+
+  void operator []=(String key, T value) => _mutable[key] = value;
+
+  /// The contents of `JsonMap`, as a standard mutable collection.
+  @override
+  Map<String, T> get data => this._mutable;
+}
+
+class MutableJsonList<T extends JsonNode> extends JsonList<T> {
+  MutableJsonList(super.data);
+
+  void operator []=(int index, T value) => _mutable[index] = value;
+
+  /// The contents of `JsonList`, as a standard mutable collection.
+  @override
+  List<T> get data => this._mutable;
 }

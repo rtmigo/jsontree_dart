@@ -53,12 +53,12 @@ main() {
 // we completely get rid of dynamic types: both response and parameters 
 // are descendants of `JsonNode`. That means we can only create JSON-compatible
 // tree
-void addToResponse(JsonMap response, JsonNode item) {
+void addToResponse(MutableJsonMap response, JsonNode item) {
   response[key] = item;
 }
 
 main() {
-  final response = JsonMap();
+  final response = MutableJsonMap();
 
   // we are forced to convert each parameter to a JsonNode. And the correctness 
   // of the parameters is checked even before compilation: the IDE will warn you 
@@ -82,7 +82,11 @@ JsonAny
    ^^ JsonDouble
    ^^ JsonString
 ^^ JsonList
+   ^^ MutableJsonList
 ^^ JsonMap
+   ^^ MutableJsonMap
 ^^ JsonNull
 ```
+
+By default, all the objects are immutable except `MutableJsonMap` and `MutableJsonList`. 
   
