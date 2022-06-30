@@ -17,26 +17,26 @@ print(tree.toJsonCode());
 
 ## Motivation
 
-Imagine that we are creating a draft for a web service that generates a
-`response` as a `Map` and at the last stage converts this `Map` to JSON.
+Imagine that we are creating a web service. We generate a `response` as a `Map`
+and later convert this `Map` to JSON.
 
 #### Bad:
 
 ```dart
-void addToResponse(Map<String, dynamic> response, String key, dynamic item) {
-  response["item"] = item; 
+void addToResponse(Map<String, dynamic> jsonResponse, String key, dynamic item) {
+  jsonResponse["item"] = item; 
 }
 
 main() {
   final response = Map<String, dynamic>();
 
-  addToResponse(response, "status", "OK");
+  addToResponse(jsonResponse, "status", "OK");
 
   // DateTime is not convertible, but we don't know that yet 
-  addToResponse(response, "time", DateTime.now());
+  addToResponse(jsonResponse, "time", DateTime.now());
 
   // oops! Dynamic error: DateTime cannot be converted
-  print(json.convert(response));  
+  print(json.convert(jsonResponse));  
 }
 ```
 
@@ -45,7 +45,7 @@ main() {
 ```dart
 // declaring the param as JsonNode, that is restricted to be some of the 
 // JSON-compatible types  
-void addToResponse(Map<String, dynamic> response, String key, JsonNode param) {
+void addToResponse(Map<String, dynamic> jsonResponse, String key, JsonNode param) {
   response["item"] = item.toBaseValue();
 }
 
@@ -54,8 +54,8 @@ main() {
   
   // passing all parameters as JsonNode descendants, 
   // otherwise the compiler will not allow it
-  addToResponse(response, "status", JsonString("OK"));
-  addToResponse(response, "time", JsonInt(DateTime.now().millisecondsSinceEpoch));
+  addToResponse(response, "status", "OK".jsonNode);
+  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
   
   // works ok
   print(json.convert(response));  
