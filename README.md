@@ -266,3 +266,8 @@ range number, use `int.jsonNode64`.
 ```dart
 final c = 9999999999999999.jsonNode64;  // no problem
 ```
+
+## License
+
+Copyright © 2022 [Artёm IG](https://github.com/rtmigo).
+Released under the [MIT License](LICENSE).
