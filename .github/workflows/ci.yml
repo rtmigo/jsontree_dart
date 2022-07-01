@@ -137,5 +137,5 @@ jobs:
       - name: Publish package
         run:
           #pub publish --dry-run
-          pub publish -f
+          dart pub publish -f
 
