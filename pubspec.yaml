@@ -1,5 +1,4 @@
 name: jsontree
-#publish_to: none
 
 repository: https://github.com/rtmigo/jsontree_dart
 description: Statically typed JSON tree. The tree can contain JSON-compatible atomic types and nothing else.
