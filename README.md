@@ -4,23 +4,52 @@
 
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
-A library for creating statically checked JSON trees. No dynamic conversion
-errors!
+Statically typed JSON tree.
+
+The tree can contain JSON-compatible atomic types and nothing else. That is,
+only `String`, `int`, `double`, `bool` or `null` -- combined by nested `Map` or
+`List` objects.
+
+This allows you to prevent data errors at a very early stage. Adding
+incompatible data to the tree is not possible: you will see an error in the IDE
+and the program will not compile.
 
 ## Example
+
+Create a tree in declarative style:
 
 ```dart
 import 'package:jsontree/jsontree.dart';
 
 void main() {
   final tree = {
-    "name": "Joe".jsonNode,
-    "age": 30.jsonNode,
-    "kids": ["Mary".jsonNode, "Michael".jsonNode].jsonNode
+    "planet": "Mars".jsonNode,
+    "diameter": 6779.jsonNode,
+    "satellites": ["Phobos".jsonNode, "Deimos".jsonNode].jsonNode
   }.jsonNode;
 
   print(tree.toJsonCode());
-  // {"name":"Joe","age":30,"kids":["Mary","Michael"]}
+  // {"planet":"Mars","diameter":6779,"satellites":["Phobos","Deimos"]}
+}
+```
+
+Or create the tree in an imperative style:
+
+```dart
+import 'package:jsontree/jsontree.dart';
+
+void main() {
+  final satellites = MutableJsonList.empty();
+  satellites.data.add("Phobos".jsonNode);
+  satellites.data.add("Deimos".jsonNode);
+
+  final tree = MutableJsonMap.empty();
+  tree.data["planet"] = "Mars".jsonNode;
+  tree.data["diameter"] = 6779.jsonNode;
+  tree.data["satellites"] = satellites;
+
+  print(tree.toJsonCode());
+  // {"planet":"Mars","diameter":6779,"satellites":["Phobos","Deimos"]}
 }
 ```
 
@@ -29,50 +58,39 @@ void main() {
 Imagine that we are creating a web service. We generate a `response` as a `Map`
 and later convert it to JSON.
 
-#### Bad:
+#### Bad (dynamic typing):
 
 ```dart
 import 'dart:convert';
 
-void addToResponse(Map<String, dynamic> response, String key, dynamic item) {
-  response[key] = item;
-}
-
-main() {
-  final response = <String, dynamic>{}; // to be converted to JSON
+respond() {
+  final response = <String, dynamic>{};  // to be converted to JSON
 
   // DateTime is not convertible, but we don't know that yet
-  addToResponse(response, "status", "OK");
-  addToResponse(response, "time", DateTime.now()); // oops
+  response["time"] = DateTime.now();  // oops  
+  response["status"] = "OK";
 
   // dynamic error: DateTime cannot be converted
-  print(json.convert(response));
+  send(json.convert(response));
 }
 ```
 
-#### Good:
+#### Good (static typing):
 
 ``` dart
 import 'package:jsontree/jsontree.dart';
 
-// we completely get rid of dynamic types: both response and parameters 
-// are descendants of `JsonNode`. That means we can only create JSON-compatible
-// tree
-void addToResponse(MutableJsonMap response, JsonNode item) {
-  response[key] = item;
-}
+respond() {
+  final response = MutableJsonMap();  // no dynamic types
 
-main() {
-  final response = MutableJsonMap();
-
-  // we are forced to convert each parameter to a JsonNode. And the correctness 
-  // of the parameters is checked even before compilation: the IDE will warn you 
-  // about an incorrect parameter
-  addToResponse(response, "status", "OK".jsonNode);
-  addToResponse(response, "time", DateTime.now().millisecondsSinceEpoch.jsonNode);
+  // to place an object inside MutableJsonMap we are forced to convert each 
+  // parameter to a JsonNode. But there's no way to convert DateTime to it,
+  // so we have to do it right
+  response["time"] = DateTime.now().millisecondsSinceEpoch.jsonNode;  
+  response["status"] = "OK".jsonNode;
 
   // no errors, as it should be
-  print(response.toJsonCode());
+  send(response.toJsonCode());
 }
 ```
 
@@ -84,15 +102,64 @@ object depends on the type of `x`.
 For example, `5.jsonNode` creates `JsonInt(5)`. And `5.23.jsonNode`
 creates `JsonDouble(5.23)`.
 
-This also works for lists and maps as long as there are node objects inside. You
-can do `[1.jsonNode, 2.jsonNode].jsonNode` to get `JsonList<JsonInt>`. But you
-can't just do `[1, 2].jsonNode` -- it won't compile.
+This works for structures as well.
+
+``` dart
+final sheldon = {
+    'name': 'Sheldon'.jsonNode,
+    'surname': 'Cooper'.jsonNode,
+    'iq': 187.jsonNode,
+    'girlfriends': 1.jsonNode
+}.jsonNode; 
+
+// you can't add .jsonNode to the map if you miss at least 
+// one .jsonNode added to elements
+
+final leonard = {
+    'name': 'Leonard'.jsonNode,
+    'surname': 'Hofstadter'.jsonNode,
+    'iq': 173.jsonNode,
+    'girlfriends': 4.jsonNode
+}.jsonNode;
+
+// connect these nodes into an even larger structure
+
+final tree = {
+    'science': 'physics'.jsonNode,
+    'neighbours': [leonard, sheldon].jsonNode
+}.jsonNode; 
+```
 
 Regardless of the type, all the wrapper objects will be inherited from the
 base `JsonNode`. If you have created a `JsonNode`, you can be sure that there is
 JSON-compatible data inside.
 
-## .toJson() converts to original objects tree
+## Tree to JSON string
+
+For any `JsonNode` object, you can call the `.toJsonCode()` method to convert it
+to JSON string.
+
+``` dart
+import 'package:jsontree/jsontree.dart';
+...
+
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
+print(tree.toJsonCode());
+```
+
+You can also pass the tree directly to `json.convert`:
+
+``` dart
+import 'package:jsontree/jsontree.dart';
+import 'dart:convert';
+...
+
+final tree = [1.jsonNode, 2.jsonNode].jsonNode;
+print(json.convert(tree));
+```
+
+
+## Tree to original objects
 
 You can also call `.toJson()` to get rid of all the wrappers and get the
 original set of Dart objects. Because these objects were validated when the tree
@@ -108,28 +175,8 @@ final original = tree.toJson();  // [1, 2]
 print(json.convert(original));
 ```
 
-You can also pass the tree directly to `json.convert`:
 
-``` dart
-import 'package:jsontree/jsontree.dart';
-import 'dart:convert';
-...
 
-final tree = [1.jsonNode, 2.jsonNode].jsonNode;
-print(json.convert(tree));
-```
-
-## .toJsonCode() convert to string with JSON
-
-For any `JsonNode` object, you can call the `.toJsonCode()` method to convert it
-to JSON string.
-
-``` dart
-final tree = [1.jsonNode, 2.jsonNode].jsonNode;
-print(tree.toJsonCode());
-```
-
-This is just a shortcut for calling `json.convert`. 
 
 ## Immutability
 

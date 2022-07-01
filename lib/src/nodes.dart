@@ -192,6 +192,8 @@ class JsonMap<T extends JsonNode> extends JsonNode {
 class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
   MutableJsonMap(super.data);
 
+  static MutableJsonMap empty<T extends JsonNode>() => MutableJsonMap<T>({});
+
   void operator []=(String key, T value) => _mutable[key] = value;
 
   /// The contents of `JsonMap`, as a standard mutable collection.
@@ -203,6 +205,8 @@ class MutableJsonMap<T extends JsonNode> extends JsonMap<T> {
 
 class MutableJsonList<T extends JsonNode> extends JsonList<T> {
   MutableJsonList(super.data);
+
+  static MutableJsonList empty<T extends JsonNode>() => MutableJsonList<T>([]);
 
   void operator []=(int index, T value) => _mutable[index] = value;
 
