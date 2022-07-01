@@ -1,5 +1,3 @@
-# https://github.com/dart-lang/setup-dart
-
 name: unittest
 
 on:
@@ -24,14 +22,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest] # [ubuntu-latest, macos-latest, windows-latest]
-        sdk: [2.17.0] # latest
-        platform: [node, vm, chrome]
+        os: [ubuntu-latest, windows-latest] # [ubuntu-latest, macos-latest, windows-latest]
+        sdk: [2.17.0 # latest
+        platform: [vm, node, chrome] #[node, vm, chrome]
+        exclude:
+          # 2021-11: chrome+windows platform timeouts for some reason
+          - os: windows-latest
+            platform: chrome
 
     steps:
-
       - uses: actions/checkout@v2
-      #      - uses: actions/setup-node@v2
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
@@ -39,16 +39,27 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
-      #      - name: VM tests
-      #        run: dart test
-
-      #
       - name: Tests
 
         run: dart test --platform ${{ matrix.platform }} --timeout=60s
 
+
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 2.12.0
+      - name: Install dependencies
+        run: dart pub get
+      - name: Analyze
+        run: dart analyze lib --fatal-infos
+      - name: Publish (dry run)
+        run: dart pub publish --dry-run
+
   to-staging:
-    needs: [test]
+    needs: [test, analyze]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -59,4 +70,72 @@ jobs:
           target_branch: staging
           github_token: ${{ github.token }}
 
+
+  to-master:
+    if: github.event.head_commit.message=='publish'
+    needs: [to-staging]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # UPDATE MASTER BRANCH
+
+      - name: Merge to master branch
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          target_branch: master
+          github_token: ${{ github.token }}
+
+      # ADD GITHUB RELEASE
+
+      - name: Get version from pubspec.yaml
+        run: echo "PKGVER=$(sed -n "s/version://p" pubspec.yaml | xargs)" >> $GITHUB_ENV
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.PKGVER }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  to-pubdev:
+    needs: to-master
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Setup PubDev credentials
+        run: |
+          mkdir -p ~/.pub-cache
+          cat <<EOF > ~/.pub-cache/credentials.json
+          {
+            "accessToken":"${{ secrets.PUBDEV_ACCESS_TOKEN }}",
+            "refreshToken":"${{ secrets.PUBDEV_REFRESH_TOKEN }}",
+            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
+            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
+            "expiration": 1570721159347
+          }
+          EOF
+
+      - name:  Patching 'README.md' for PubDev instead of GitHub
+        run:
+          .github/patch_readme_for_pubdev.sh
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Reformat code
+        run: dart format .
+
+      - name: Analyze reformatted
+        run: dart analyze lib --fatal-infos
+
+      - name: Unit-tests for reformatted code
+        run: dart test
+
+      - name: Publish package
+        run:
+          #pub publish --dry-run
+          pub publish -f
 
