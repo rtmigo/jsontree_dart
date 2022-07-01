@@ -2,14 +2,11 @@ import 'package:jsontree/jsontree.dart';
 
 void main() {
   final tree = {
-    "name": "Joe".jsonNode,
-    "age": 30.jsonNode,
-    "kids": ["Mary".jsonNode, "Michael".jsonNode].jsonNode
+    "planet": "Mars".jsonNode,
+    "diameter": 6779.jsonNode,
+    "satellites": ["Phobos".jsonNode, "Deimos".jsonNode].jsonNode
   }.jsonNode;
 
   print(tree.toJsonCode());
-  // {"name":"Joe","age":30,"kids":["Mary","Michael"]}
-
-  print(tree.toJson());
-  // {name: Joe, age: 30, kids: [Mary, Michael]}
+  // {"planet":"Mars","diameter":6779,"satellites":["Phobos","Deimos"]}
 }
