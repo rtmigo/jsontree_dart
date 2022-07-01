@@ -1,4 +1,3 @@
-![Generic badge](https://img.shields.io/badge/status-WIP-red.svg)
 ![Generic badge](https://img.shields.io/badge/dart-2.17+-blue.svg)
 ![Generic badge](https://img.shields.io/badge/platform-VM_|_JS-blue.svg)
 
@@ -54,42 +53,43 @@ void main() {
 
 ## Motivation
 
-Imagine that we are creating a web service. We generate a `response` as a `Map`
-and later convert it to JSON.
+Imagine that we need to create some JSON `request`, that will be later converted
+to JSON and sent to sever.
 
-#### Bad (dynamic typing):
+#### BAD: dynamic typing
 
 ```dart
 import 'dart:convert';
 
-respond() {
-  final response = <String, dynamic>{};  // to be converted to JSON
+main() {
+  final request = <String, dynamic>{};  // to be converted to JSON
 
   // DateTime is not convertible, but we don't know that yet
-  response["time"] = DateTime.now();  // oops  
-  response["status"] = "OK";
+  request["time"] = DateTime.now();  // oops  
+  request["message"] = "Hi!";
 
   // runtime exception: DateTime cannot be converted
-  send(json.convert(response));
+  send(json.convert(request));
 }
 ```
 
-#### Good (static typing):
+#### GOOD: static typing
 
 ``` dart
+import 'dart:convert';
 import 'package:jsontree/jsontree.dart';
 
 respond() {
-  final response = MutableJsonMap();  // no dynamic types
+  final request = MutableJsonMap();  // no dynamic types
 
   // to place an object inside MutableJsonMap we are forced to convert each 
   // parameter to a JsonNode. But there's no way to convert DateTime to it,
   // so we have to do it right
-  response["time"] = DateTime.now().millisecondsSinceEpoch.jsonNode;  
-  response["status"] = "OK".jsonNode;
+  request["time"] = DateTime.now().millisecondsSinceEpoch.jsonNode;  
+  request["message"] = "Hi!".jsonNode;
 
   // no errors, as it should be
-  send(response.toJsonCode());
+  send(json.convert(request));
 }
 ```
 
@@ -101,7 +101,7 @@ object depends on the type of `x`.
 For example, `5.jsonNode` creates `JsonInt(5)`. And `5.23.jsonNode`
 creates `JsonDouble(5.23)`.
 
-This works for structures as well.
+This works for collections as well.
 
 ``` dart
 final sheldon = {
@@ -169,9 +169,11 @@ import 'package:jsontree/jsontree.dart';
 import 'dart:convert'
 ...
 
-final tree = [1.jsonNode, 2.jsonNode].jsonNode;
-final original = tree.toJson();  // [1, 2]
-print(json.convert(original));
+JsonList tree = [1.jsonNode, 2.jsonNode].jsonNode;
+List<int> list = tree.toJson();  // [1, 2]
+
+// of course, the list convertible to JSON 
+print(json.convert(dartList));
 ```
 
 
@@ -182,26 +184,26 @@ print(json.convert(original));
 By default, all objects are immutable.
 
 ```dart
-final JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
+JsonMap m = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 // you can read m or m.data, but cannot change 
 ```
 
 There are also mutable versions for lists and maps.
 
 ```dart
-final m = MutableJsonMap({"a": 1.jsonNode, "b": 2.jsonNode});
+var m = MutableJsonMap({"a": 1.jsonNode, "b": 2.jsonNode});
 // you can read/write m and m.data 
 ```
 
 Mutability and immutability are achievable after the creation of objects.
 
 ``` dart
-final readOnly = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
+JsonMap readOnly = {"a": 1.jsonNode, "b": 2.jsonNode}.jsonNode;
 
-final readWrite = readOnly.toMutable();  // creates a copy
-mutable["c"] = 3.jsonNode;
+MutableJsonMap readWrite = readOnly.toMutable();  // creates a copy
+readWrite["c"] = 3.jsonNode;
 
-final readOnlyAgain = readWrite.asImmutable();  // wraps the data as immutable
+JsonMap readOnlyAgain = readWrite.asImmutable();  // wraps the data as immutable
 ```
 
 `toMutable` will create a copy of the data, respecting the immutability of
@@ -228,8 +230,8 @@ print([a, b, "something else".jsonNode].jsonNode.toJsonCode())
 JsonAny
 ^^ JsonValue
    ^^ JsonInt
-      ^^ SafeJsonInt     (-9007199254740991 <= x <= 9007199254740991)
-      ^^ UnsafeJsonInt   (full int64 range, but inaccurate) 
+      ^^ JsonInt53   (JavaScript range)
+      ^^ JsonInt64   (full int64 range) 
    ^^ JsonDouble
    ^^ JsonString
 ^^ JsonList
@@ -242,35 +244,23 @@ JsonAny
 By default, all the objects are immutable except `MutableJsonMap`
 and `MutableJsonList`.
 
-All data is statically checked for compatibility, except for `SafeJsonInt`
-values.
+## Integer ranges
 
-With an inappropriate value, `SafeJsonInt` will throw an exception at the time
-of creation. This is still better than getting an error when converting the
-entire tree.
+By default, `int.jsonNode` creates a `JsonInt53` object. It only allows you to
+set integer values that will not lose precision in JavaScript.
 
-## License
+```dart
+final a = 5.jsonNode;  // no problem
+final b = 9999999999999999.jsonNode;  // throws ArgumentError
+```
 
-```text
-MIT License
+This restriction is relevant because JSON is literally JavaScript Object
+Notation.
 
-Copyright (c) 2022 Artёm IG <github.com/rtmigo>
+But most languages are able to read larger numbers from JSON. To store the full
+range number, use `int.jsonNode64`.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+```dart
+final c = 9999999999999999.jsonNode64;  // no problem
 ```

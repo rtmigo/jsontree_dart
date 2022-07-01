@@ -44,7 +44,7 @@ abstract class JsonNode {
     if (obj == null) {
       return JsonNull();
     } else if (obj is int) {
-      return safeIntegers ? SafeJsonInt(obj) : UnsafeJsonInt(obj);
+      return safeIntegers ? JsonInt53(obj) : JsonInt64(obj);
     } else if (obj is double) {
       return JsonDouble(obj);
     } else if (obj is String) {
@@ -89,18 +89,23 @@ abstract class JsonInt extends JsonValue<int> {
   int toJson() => this.value;
 }
 
-class SafeJsonInt extends JsonInt {
-  static const int MIN_SAFE_INTEGER = -9007199254740991;
-  static const int MAX_SAFE_INTEGER = 9007199254740991;
+class JsonInt53 extends JsonInt {
+  static const int minJsInteger = -9007199254740991;
+  static const int maxJsInteger = 9007199254740991;
 
-  SafeJsonInt(super.value) {
+  JsonInt53(super.value) {
     _checkValue(super.value);
   }
 
+  static bool isSafe(int x) =>
+       minJsInteger <=x && x<=maxJsInteger;
+
   static void _checkValue(int x) {
-    if (x < MIN_SAFE_INTEGER || x > MAX_SAFE_INTEGER) {
-      throw ArgumentError.value(x,
-          "The value cannot be interpreted exactly as a Number in JavaScript.");
+    if (!isSafe(x)) {
+      throw ArgumentError.value(
+          x,
+          "The value is out of range of exact integers in JavaScript. "
+          "Use $JsonInt64 if you don't care.");
     }
   }
 
@@ -108,8 +113,8 @@ class SafeJsonInt extends JsonInt {
   int toJson() => this.value;
 }
 
-class UnsafeJsonInt extends JsonInt {
-  UnsafeJsonInt(super.value);
+class JsonInt64 extends JsonInt {
+  JsonInt64(super.value);
 
   @override
   int toJson() => this.value;
@@ -216,4 +221,3 @@ class MutableJsonList<T extends JsonNode> extends JsonList<T> {
 
   JsonList<T> asImmutable() => JsonList(this._mutable);
 }
-
