@@ -69,7 +69,7 @@ respond() {
   response["time"] = DateTime.now();  // oops  
   response["status"] = "OK";
 
-  // dynamic error: DateTime cannot be converted
+  // runtime exception: DateTime cannot be converted
   send(json.convert(response));
 }
 ```
