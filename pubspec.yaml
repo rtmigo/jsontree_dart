@@ -2,9 +2,9 @@ name: jsontree
 #publish_to: none
 
 repository: https://github.com/rtmigo/jsontree_dart
-description: Statically typed JSON tree
+description: Statically typed JSON tree. The tree can contain JSON-compatible atomic types and nothing else.
 
-version: 0.1.1
+version: 0.1.1+1
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
