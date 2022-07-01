@@ -11,7 +11,7 @@ only `String`, `int`, `double`, `bool` or `null` -- combined by nested `Map` or
 `List` objects.
 
 This allows you to prevent data errors at a very early stage. You will see
-warning in the IDE and the program will not compile.
+warnings from IDE and the program will not compile.
 
 ## Example
 
