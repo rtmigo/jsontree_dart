@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2022 Artёm IG <github.com/rtmigo>
+// SPDX-License-Identifier: MIT
+
 import 'package:jsontree/jsontree.dart';
 import 'package:test/test.dart';
 
@@ -32,7 +35,8 @@ void main() {
   });
 
   group('map', () {
-    final tree = {"one": 1.jsonNode, "two": 2.jsonNode, "three": 3.jsonNode}.jsonNode;
+    final tree =
+        {"one": 1.jsonNode, "two": 2.jsonNode, "three": 3.jsonNode}.jsonNode;
 
     test('can iterate as standard collection', () {
       expect(tree.data.values.map((e) => e.toJson()), [1, 2, 3]);
@@ -59,5 +63,4 @@ void main() {
           throwsA(isA<UnsupportedError>()));
     });
   });
-
 }
