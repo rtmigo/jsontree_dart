@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest] # [ubuntu-latest, macos-latest, windows-latest]
-        sdk: [2.17.0 # latest
+        sdk: [2.17.0] # latest
         platform: [vm, node, chrome] #[node, vm, chrome]
         exclude:
           # 2021-11: chrome+windows platform timeouts for some reason
