@@ -216,3 +216,4 @@ class MutableJsonList<T extends JsonNode> extends JsonList<T> {
 
   JsonList<T> asImmutable() => JsonList(this._mutable);
 }
+

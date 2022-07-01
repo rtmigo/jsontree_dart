@@ -10,9 +10,8 @@ The tree can contain JSON-compatible atomic types and nothing else. That is,
 only `String`, `int`, `double`, `bool` or `null` -- combined by nested `Map` or
 `List` objects.
 
-This allows you to prevent data errors at a very early stage. Adding
-incompatible data to the tree is not possible: you will see an error in the IDE
-and the program will not compile.
+This allows you to prevent data errors at a very early stage. You will see
+warnings from IDE and the program will not compile.
 
 ## Example
 
@@ -70,7 +69,7 @@ respond() {
   response["time"] = DateTime.now();  // oops  
   response["status"] = "OK";
 
-  // dynamic error: DateTime cannot be converted
+  // runtime exception: DateTime cannot be converted
   send(json.convert(response));
 }
 ```
