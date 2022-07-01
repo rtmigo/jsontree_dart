@@ -1,5 +1,7 @@
 ![Generic badge](https://img.shields.io/badge/dart-2.17+-blue.svg)
 ![Generic badge](https://img.shields.io/badge/platform-VM_|_JS-blue.svg)
+[![Pub Package](https://img.shields.io/pub/v/jsontree.svg)](https://pub.dev/packages/jsontree)
+[![pub points](https://badges.bar/jsontree/pub%20points)](https://pub.dev/packages/jsontree/score)
 
 # [jsontree](https://github.com/rtmigo/jsontree_dart)
 
