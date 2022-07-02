@@ -19,28 +19,38 @@ abstract class JsonNode {
   /// be JSON-convertible.
   ///
   /// ```dart
-  /// final myTree = JsonMap(...);
-  /// final simpleMap = myTree.toJson();
+  /// var myTree = JsonList([JsonInt(1), JsonInt(2)]);
+  /// List<int> simpleList = myTree.toJson();
   /// ```
-  ///
-  /// This method also make possible to pass any `JsonNode` object directly to
-  /// `json.encode` (without calling `toJson`).
+  dynamic unwrap();
+
+  /// The same as [unwrap]. This alias makes [JsonNode] compatible with
+  /// the [json.encode] function.
   ///
   /// ```dart
   /// final myTree = JsonMap(...);
   /// json.encode(myTree);
   /// ```
-  dynamic toJson();
+  dynamic toJson() => unwrap();
 
   String toJsonCode() {
-    return convert.json.encode(this.toJson());
+    return convert.json.encode(this.unwrap());
   }
 
   static JsonNode fromJsonCode(String json) {
-    return fromJson(convert.json.decode(json));
+    return wrap(convert.json.decode(json));
   }
 
-  static JsonNode fromJson(dynamic obj, {bool safeIntegers = true}) {
+  /// Wraps [obj] and all of its children in a tree of [JsonNode] objects.
+  ///
+  /// ```dart
+  /// var map = {'a': 1, 'b': [2.3, 4.5]};
+  /// var tree = JsonNode.wrap(map);
+  /// ```
+  ///
+  /// This should only be done if you already have a generated JSON-compatible
+  /// object tree.
+  static JsonNode wrap(dynamic obj, {bool safeIntegers = true}) {
     if (obj == null) {
       return JsonNull();
     } else if (obj is int) {
@@ -53,20 +63,29 @@ abstract class JsonNode {
       return JsonBool(obj);
     } else if (obj is List) {
       return JsonList(
-          obj.map((e) => fromJson(e, safeIntegers: safeIntegers)).toList());
+          obj.map((e) => wrap(e, safeIntegers: safeIntegers)).toList());
     } else if (obj is Map) {
       return JsonMap(Map<String, JsonNode>.fromEntries(obj.entries.map((e) =>
-          MapEntry(e.key as String,
-              fromJson(e.value, safeIntegers: safeIntegers)))));
+          MapEntry(
+              e.key as String, wrap(e.value, safeIntegers: safeIntegers)))));
+    } else if (obj is JsonNode) {
+      return obj;
     } else {
-      throw JsonTypeError("Cannot convert ${obj.runtimeType} to JsonNode");
+      dynamic pure;
+      try {
+        pure = obj.toJson();
+      } on NoSuchMethodError {
+        throw JsonTypeError("Cannot convert ${obj.runtimeType} to JsonNode");
+      }
+
+      return wrap(pure, safeIntegers: safeIntegers);
     }
   }
 }
 
 class JsonNull extends JsonNode {
   @override
-  dynamic toJson() => null;
+  dynamic unwrap() => null;
 
   // This is a singleton object.
   factory JsonNull() => _instance;
@@ -86,7 +105,7 @@ abstract class JsonInt extends JsonValue<int> {
   JsonInt(super.value);
 
   @override
-  int toJson() => this.value;
+  int unwrap() => this.value;
 }
 
 class JsonInt53 extends JsonInt {
@@ -97,8 +116,7 @@ class JsonInt53 extends JsonInt {
     _checkValue(super.value);
   }
 
-  static bool isSafe(int x) =>
-       minJsInteger <=x && x<=maxJsInteger;
+  static bool isSafe(int x) => minJsInteger <= x && x <= maxJsInteger;
 
   static void _checkValue(int x) {
     if (!isSafe(x)) {
@@ -110,35 +128,35 @@ class JsonInt53 extends JsonInt {
   }
 
   @override
-  int toJson() => this.value;
+  int unwrap() => this.value;
 }
 
 class JsonInt64 extends JsonInt {
   JsonInt64(super.value);
 
   @override
-  int toJson() => this.value;
+  int unwrap() => this.value;
 }
 
 class JsonBool extends JsonValue<bool> {
   JsonBool(super.value);
 
   @override
-  bool toJson() => this.value;
+  bool unwrap() => this.value;
 }
 
 class JsonString extends JsonValue<String> {
   JsonString(super.value);
 
   @override
-  String toJson() => this.value;
+  String unwrap() => this.value;
 }
 
 class JsonDouble extends JsonValue<double> {
   JsonDouble(super.value);
 
   @override
-  double toJson() => this.value;
+  double unwrap() => this.value;
 }
 
 class JsonList<T extends JsonNode> extends JsonNode {
@@ -159,7 +177,7 @@ class JsonList<T extends JsonNode> extends JsonNode {
   T operator [](int index) => _mutable[index];
 
   @override
-  List<dynamic> toJson() => this._mutable.map((e) => e.toJson()).toList();
+  List<dynamic> unwrap() => this._mutable.map((e) => e.unwrap()).toList();
 
   /// Creates a copy.
   MutableJsonList<T> toMutable() =>
@@ -185,10 +203,10 @@ class JsonMap<T extends JsonNode> extends JsonNode {
   T? operator [](String key) => _mutable[key];
 
   @override
-  Map<String, dynamic> toJson() => Map<String, dynamic>.fromEntries(this
+  Map<String, dynamic> unwrap() => Map<String, dynamic>.fromEntries(this
       ._mutable
       .entries
-      .map((me) => MapEntry<String, dynamic>(me.key, me.value.toJson())));
+      .map((me) => MapEntry<String, dynamic>(me.key, me.value.unwrap())));
 
   MutableJsonMap<T> toMutable() =>
       MutableJsonMap(Map<String, T>.from(this._mutable));

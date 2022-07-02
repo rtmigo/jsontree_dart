@@ -9,7 +9,7 @@ void main() {
     final tree = [1.jsonNode, 2.jsonNode, 3.jsonNode].jsonNode;
 
     test('can iterate as standard collection', () {
-      expect(tree.data.map((e) => e.toJson()), [1, 2, 3]);
+      expect(tree.data.map((e) => e.unwrap()), [1, 2, 3]);
     });
 
     test('but cannot modify', () {
@@ -23,8 +23,8 @@ void main() {
       mutable.data.add(x);
 
       // value is added to the new object, but not the original
-      expect(tree.data.map((e) => e.toJson()).length, 3);
-      expect(mutable.data.map((e) => e.toJson()).length, 4);
+      expect(tree.data.map((e) => e.unwrap()).length, 3);
+      expect(mutable.data.map((e) => e.unwrap()).length, 4);
     });
 
     test('mutable.immutable is immutable', () {
@@ -39,7 +39,7 @@ void main() {
         {"one": 1.jsonNode, "two": 2.jsonNode, "three": 3.jsonNode}.jsonNode;
 
     test('can iterate as standard collection', () {
-      expect(tree.data.values.map((e) => e.toJson()), [1, 2, 3]);
+      expect(tree.data.values.map((e) => e.unwrap()), [1, 2, 3]);
     });
 
     test('but cannot modify', () {
@@ -53,8 +53,8 @@ void main() {
       mutable.data["four"] = x;
 
       // value is added to the new object, but not the original
-      expect(tree.data.values.map((e) => e.toJson()).length, 3);
-      expect(mutable.data.values.map((e) => e.toJson()).length, 4);
+      expect(tree.data.values.map((e) => e.unwrap()).length, 3);
+      expect(mutable.data.values.map((e) => e.unwrap()).length, 4);
     });
 
     test('mutable.immutable is immutable', () {
