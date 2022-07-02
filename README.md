@@ -204,10 +204,8 @@ final leonard = {
     'iq': 173,
 };
 
-JsonNode tree = JsonNode.wrap(tree);
+JsonNode tree = JsonNode.wrap(leonard);
 ```
-
-
 
 
 ## JsonNodes immutability
@@ -240,7 +238,7 @@ JsonMap readOnlyAgain = readWrite.asImmutable();  // wraps the data as immutable
 `toMutable` will create a copy of the data, respecting the immutability of
 the original objects.
 
-`asImmutable` will just wrap the data into into an object, that does not allow
+`asImmutable` will just wrap the data into an object, that does not allow
 modification.
 
 
