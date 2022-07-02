@@ -56,7 +56,7 @@ void main() {
 ## Motivation
 
 Imagine that we need to create some JSON `request`, that will be later converted
-to JSON and sent to sever.
+to JSON and sent to server.
 
 #### BAD: dynamic typing
 
@@ -175,7 +175,7 @@ print([a, b, "something else".jsonNode].jsonNode.toJsonCode())
 
 ## JsonNode tree to original objects
 
-You can also call `.toJson()` to get rid of all the wrappers and get the
+You can also call `JsonNode.unwrap()` to get rid of all the wrappers and get the
 original set of Dart objects. Because these objects were validated when the tree
 was created, the result is guaranteed to be able to be converted to JSON.
 
