@@ -95,7 +95,7 @@ respond() {
 }
 ```
 
-## Tree creation
+## JsonNode tree creation
 
 ```x.jsonNode``` creates an object that wraps the `x` value. The type of the
 object depends on the type of `x`.
@@ -135,7 +135,7 @@ Regardless of the type, all the wrapper objects will be inherited from the
 base `JsonNode`. If you have created a `JsonNode`, you can be sure that there is
 JSON-compatible data inside.
 
-## Tree to JSON string
+## JsonNode tree to JSON string
 
 For any `JsonNode` object, you can call the `.toJsonCode()` method to convert it
 to JSON string.
@@ -159,8 +159,21 @@ final tree = [1.jsonNode, 2.jsonNode].jsonNode;
 print(json.convert(tree));
 ```
 
+## JSON string to JsonNode tree
 
-## Tree to original objects
+Parsing JSON with this library only makes sense if you want to use the parsed
+values to create another tree.
+
+``` dart
+final a = JsonNode.fromJsonCode(src1);
+final b = JsonNode.fromJsonCode(src2);
+
+print([a, b, "something else".jsonNode].jsonNode.toJsonCode())
+```
+
+
+
+## JsonNode tree to original objects
 
 You can also call `.toJson()` to get rid of all the wrappers and get the
 original set of Dart objects. Because these objects were validated when the tree
@@ -172,16 +185,32 @@ import 'dart:convert'
 ...
 
 JsonList tree = [1.jsonNode, 2.jsonNode].jsonNode;
-List<int> list = tree.toJson();  // [1, 2]
+List<int> list = tree.unwrap();  // [1, 2]
 
 // of course, the list convertible to JSON 
 print(json.convert(dartList));
 ```
 
+## Objects to JsonNode tree
+
+Such conversion is contrary to the purpose of the library. It requires dynamic type checking and can lead to runtime errors.
+
+But if you already have data structures ready, this might be a reasonable compromise.
+
+```dart
+final leonard = {
+    'name': 'Leonard',
+    'surname': 'Hofstadter',
+    'iq': 173,
+};
+
+JsonNode tree = JsonNode.wrap(tree);
+```
 
 
 
-## Immutability
+
+## JsonNodes immutability
 
 By default, all objects are immutable.
 
@@ -214,17 +243,6 @@ the original objects.
 `asImmutable` will just wrap the data into into an object, that does not allow
 modification.
 
-## Parse JSON
-
-Parsing JSON with this library only makes sense if you want to use the parsed
-values to create another tree.
-
-``` dart
-final a = JsonNode.fromJsonCode(src1);
-final b = JsonNode.fromJsonCode(src2);
-
-print([a, b, "something else".jsonNode].jsonNode.toJsonCode())
-```
 
 ## Hierarchy
 
@@ -266,3 +284,8 @@ range number, use `int.jsonNode64`.
 ```dart
 final c = 9999999999999999.jsonNode64;  // no problem
 ```
+
+## License
+
+Copyright © 2022 [Artёm IG](https://github.com/rtmigo).
+Released under the [MIT License](LICENSE).
