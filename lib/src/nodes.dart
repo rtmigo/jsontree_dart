@@ -241,21 +241,19 @@ class MutableJsonList<T extends JsonNode> extends JsonList<T> {
 }
 
 /// Special node, the purpose of which is a sense is contrary to the purpose of
-/// the library. The value is of a dynamic type, and it's not checked - it's
-/// just stored in the object until the conversion to JSON code.
+/// the library. The inner value is of a dynamic type, and it's not checked -
+/// it's just stored in the object until the conversion to JSON.
 ///
 /// Such a node is useful if we have guaranteed JSON-compatible data and for
 /// performance reasons we don't want to check data types.
-///
 ///
 /// ```dart
 /// Map<String, dynamic> myHugeSubtree = jsonDecode(dataFromFile);
 ///
 /// final myCheckedTree = {
 ///   "id": 123.jsonNode,
-///   "subtree": JsonDynamic(myHugeSubtree)
+///   "subtree": JsonDynamic(myHugeSubtree)  // fast!
 /// }.jsonNode;
-///
 /// ```
 class JsonDynamic<T> extends JsonNode {
   final T value;
