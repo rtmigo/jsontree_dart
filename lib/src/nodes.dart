@@ -83,6 +83,34 @@ abstract class JsonNode {
   }
 }
 
+/// Special node, the purpose of which is contrary to the purpose of the
+/// library.
+///
+/// This node can contain any value that we believe is JSON-compliant. The value
+/// is of a dynamic type, and it's not checked - it's just stored in the object.
+///
+/// Such a node is useful if we have guaranteed JSON-compatible data and for
+/// performance reasons we don't want to check data types.
+///
+///
+/// ```dart
+/// Map<String, dynamic> myHugeSubtree = jsonDecode(dataFromFile);
+///
+/// final myCheckedTree = {
+///   "id": 123.jsonNode,
+///   "subtree": JsonDynamic(myHugeSubtree)
+/// }.jsonNode;
+///
+/// ```
+class JsonDynamic<T> extends JsonNode {
+  final T value;
+
+  JsonDynamic(this.value);
+
+  @override
+  dynamic unwrap() => value;
+}
+
 class JsonNull extends JsonNode {
   @override
   dynamic unwrap() => null;
