@@ -81,4 +81,17 @@ void main() {
     final dbl = fives[1] as JsonDouble;
     expect(dbl.value, 5.01);
   });
+
+  test('JsonDynamic', () async {
+    final d = {
+      "id": 123.jsonNode,
+      "dynamic": JsonDynamic({"a": 1, "b": 2})
+    }.jsonNode;
+
+    final data = d.unwrap();
+
+    expect(data["id"]!, 123);
+    expect(data["dynamic"]!["a"]!, 1);
+    expect(data["dynamic"]!["b"]!, 2);
+  });
 }
